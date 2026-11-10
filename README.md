@@ -52,3 +52,7 @@ Každá viditelná zpráva má vlastní DOM prvek: nová se přidá dole, starš
 ## Automatický zátěžový test v Design Labu
 
 Sekce **Automatický příval** vytváří simulované komentáře ve smyčce. Lze nastavit interval **100–2000 ms** a dávku **1, 3, 5 nebo 10 zpráv**. Tlačítka **Spustit smyčku/Zastavit** generátor ovládají. Smyčka běží pouze v náhledu GitHub Pages, nikoliv v lokálním programu ani v reálném YouTube chatu. Paměť simulace je omezena na posledních 200 zpráv.
+
+## Tempo zobrazování chatu
+
+Příjem zprávy nyní pouze vloží komentář do **čekací fronty**. Samotný overlay se **neaktualizuje při každém příjmu**: jednou za **1,8 sekundy** odebere z fronty nejvýše jednu zprávu a přidá ji dole. Dřívější karty zůstávají, dokud nejsou vytlačeny, nezestárnou (60 sekund) nebo nevejdou do maximální výšky. Fronta uchová nejvýše **40 čekajících zpráv**; při přetížení zahazuje nejstarší dosud nezobrazené. Zprávy, které během čekání překročí 60 sekund stáří, se také přeskočí. Při prvním otevření overlaye se z historie přednačte maximálně posledních pět zpráv, aby se neopakovala dlouhá historie. Zobrazení vybraného komentáře a informačního banneru tím není omezeno.
