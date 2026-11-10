@@ -76,3 +76,7 @@ Design Lab má simulovanou frontu událostí: každá má **30 s od začátku zo
 ## Režisérský panel – provozní rozložení
 
 V online prototypu `director.html` byly odstraněny testovací tlačítka pro generování chatu, manuální zadávání Super Chatů, filtr „Jen otázky“ i tlačítko pro ukázkový zvýrazněný komentář. Samostatný `preview.html` nadále slouží pro grafické a zátěžové testy. Režisérský prototyp stále využívá ukázková lokální data a falešný stav připojení; automatické získávání Super Chatů a členství z YouTube není dosud implementováno do reálného lokálního serveru.
+
+## Ergonomie režie – stabilní výběr zpráv
+
+V online `director.html` se tlačítko **V obraze** chová jako přepínač: druhým kliknutím právě zvýrazněný komentář skryje. Když je myš nad seznamem komentářů, příchod dalších zpráv jeho DOM a pořadí nepřekresluje. Po odjetí myši se nové zprávy zobrazí a obnoví se přehled; počet nových se mezitím uvádí v zápatí. Zvýraznění a odpočet fungují dál i během pozastavení. Stejnou strategii je nutné převést do lokální režie při implementaci skutečného přijímání zpráv.
