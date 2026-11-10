@@ -45,9 +45,12 @@ function makeChatLayer(el){
     const eligible=latest.filter(m=>{
       if(m.type==='superchat')return false;
       const id=String(m.id);
-      if(!born.has(id)){
-        const stamp=Date.parse(m.time||'');
-        born.set(id,Number.isFinite(stamp)&&stamp<=now+120000?stamp:now);
+      const stamp=Date.parse(m.time||'');
+      // Keep the authoritative reception time; allow the test lab to age a message.
+      if(Number.isFinite(stamp)&&stamp<=now+120000){
+        if(born.get(id)!==stamp)born.set(id,stamp);
+      }else if(!born.has(id)){
+        born.set(id,now);
       }
       return !discarded.has(id)&&now-born.get(id)<CHAT_MAX_AGE_MS;
     }).slice(-CHAT_MAX_ITEMS);
