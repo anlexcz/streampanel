@@ -99,7 +99,11 @@ $('background').addEventListener('change',e=>{viewport.className='viewport '+e.t
 $('copyObs').addEventListener('click',async()=>{const value='http://localhost:4173/overlay.html';try{await navigator.clipboard.writeText(value);$('copyObs').textContent='Zkopírováno';setTimeout(()=>$('copyObs').textContent='Kopírovat',1800)}catch{$('copyObs').textContent='Nelze kopírovat'}});
 frame.addEventListener('load',()=>{ready=true;publish()});
 addEventListener('message',e=>{if(e.origin===location.origin&&e.source===frame.contentWindow&&e.data?.type==='metrobus-preview-ready'){ready=true;publish()}});
-new ResizeObserver(resize).observe(viewport);resize();
+new ResizeObserver(resize).observe(viewport);
+$('obsPreviewDetails').addEventListener('toggle',()=>{
+ if($('obsPreviewDetails').open)requestAnimationFrame(resize);
+});
+resize();
 setInterval(()=>{const t=new Date();$('localClock').textContent=t.toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit',second:'2-digit'});if(featured&&now()>=featured.expiresAt){featured=null;syncFeaturedButtons();publish()}paintFeatured();updateEvents()},500);
 status();paintChat();paintFeatured();updateEvents();
 })();

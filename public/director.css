@@ -5,3 +5,36 @@
 /* Keep the feed steady while the director is targeting a button. */
 .chat-feed{scrollbar-gutter:stable;overflow-y:auto;overflow-anchor:none}
 .message .msg-actions button{min-width:80px}
+
+/* Director workspace: dedicated 40% chat / 60% production controls. */
+.workspace{max-width:1700px;grid-template-columns:minmax(340px,2fr) minmax(0,3fr);align-items:stretch;gap:18px}
+.chat-column{display:block;min-width:0}
+.chat-column .chat-panel{height:calc(100vh - 125px);min-height:530px;display:flex;flex-direction:column}
+.chat-column .chat-tools{flex:0 0 auto}
+.chat-column .chat-feed{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto}
+.chat-column .chat-footer{flex:0 0 auto}
+.operations-column{position:static;align-content:start;gap:15px}
+.operations-column .section-head h1{font-size:22px}
+.obs-preview-details{margin-top:12px;border-top:1px solid #394a5e}
+.obs-preview-details summary{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:13px 1px 3px;color:#eaf4fb;font-weight:700;font-size:13px;cursor:pointer;list-style:none}
+.obs-preview-details summary::-webkit-details-marker{display:none}
+.obs-preview-details summary::before{content:"▸";color:#87cefa;margin-right:7px}
+.obs-preview-details[open] summary::before{content:"▾"}
+.obs-preview-details summary span:first-child{margin-right:auto}
+.obs-preview-details .preview-hint{color:#9db1c4;font-size:11px;font-weight:400}
+.obs-preview-details .preview-content{padding-top:13px}
+.obs-preview-details .viewport{background-color:#e9eff4}
+.obs-note{margin:11px 0 0}
+@media(max-width:1100px){
+ .workspace{grid-template-columns:minmax(0,2fr) minmax(0,3fr)}
+ .chat-column{grid-row:auto}
+ .operations-column{grid-row:auto}
+ .chat-column .chat-panel{height:calc(100vh - 125px)}
+}
+@media(max-width:760px){
+ .workspace{grid-template-columns:1fr;align-items:start}
+ .operations-column{grid-row:1}
+ .chat-column{grid-row:2}
+ .chat-column .chat-panel{height:auto;min-height:480px}
+ .chat-column .chat-feed{max-height:65vh;min-height:320px}
+}

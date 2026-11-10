@@ -4,24 +4,30 @@
 <body>
 <header class="top"><div class="brand"><span class="logo">M</span><div><strong>METROBUS <span>STREAM PANEL</span></strong><small>REŽIE · INTERAKTIVNÍ PROTOTYP</small></div></div><div class="top-right"><span class="pill demo">NÁVRH REŽIE · data simulovaná</span><a href="./preview.html">Testování grafiky ↗</a></div></header>
 <main class="workspace">
-<section class="main-column">
- <div class="section-head"><div><h1>Režie streamu</h1><p>Ovládání komentářů, zvýraznění a mimořádných událostí</p></div><span id="localClock" class="muted"></span></div>
- <section class="panel stream-panel"><div class="panel-heading"><h2>Vysílání</h2><span id="connectionStatus" class="state"><span class="dot"></span> Odpojeno</span></div>
- <div class="connect-row"><input id="streamUrl" placeholder="Odkaz na živý YouTube stream" aria-label="Adresa YouTube streamu"><button id="connect" class="primary">Připojit (demo)</button><button id="disconnect" class="subtle" disabled>Odpojit</button></div><p class="small">Simulované připojení — žádné požadavky na YouTube. Pro ostrý provoz zůstává lokální aplikace.</p></section>
+<section class="main-column chat-column">
  <section class="panel chat-panel"><div class="panel-heading"><div class="heading-inline"><h2>Příchozí komentáře</h2><span class="count" id="chatCount">0</span></div><div class="heading-inline"><label class="switch-label"><input type="checkbox" id="chatVisible" checked> Chat v obraze</label></div></div>
  <div class="chat-tools"><input id="chatSearch" placeholder="Hledat mezi komentáři…" aria-label="Hledat komentáře"></div>
  <div id="chatFeed" class="chat-feed" aria-live="polite"></div><div class="chat-footer"><span>Nejnovější komentáře nahoře · kliknutím zvýraznit</span><span id="chatStats">0 zpráv</span></div></section>
+</section>
+<aside class="side-column operations-column">
+ <div class="section-head"><div><h1>Režie streamu</h1><p>Ovládání vysílání a zobrazených událostí</p></div><span id="localClock" class="muted"></span></div>
+ <section class="panel stream-panel"><div class="panel-heading"><h2>Vysílání</h2><span id="connectionStatus" class="state"><span class="dot"></span> Odpojeno</span></div>
+ <div class="connect-row"><input id="streamUrl" placeholder="Odkaz na živý YouTube stream" aria-label="Adresa YouTube streamu"><button id="connect" class="primary">Připojit (demo)</button><button id="disconnect" class="subtle" disabled>Odpojit</button></div><p class="small">Simulované připojení — žádné požadavky na YouTube. Pro ostrý provoz zůstává lokální aplikace.</p></section>
+ <section class="panel obs-setup-panel">
+ <div class="panel-heading"><h2>OBS zdroj</h2><span class="small">Jeden společný overlay</span></div>
+ <div class="output-url">http://localhost:4173/overlay.html <button id="copyObs">Kopírovat</button></div>
+ <details id="obsPreviewDetails" class="obs-preview-details">
+ <summary><span>Náhled OBS</span><span class="preview-hint">1920 × 1080 · kliknutím rozbalit</span></summary>
+ <div class="preview-content">
+ <div id="viewport" class="viewport dark"><iframe id="frame" src="./public/preview-frame.html" title="Náhled OBS" scrolling="no"></iframe></div>
+ <div class="preview-options"><label>Motiv <select id="theme"><option value="dark">Tmavý</option><option value="light">Světlý</option></select></label><label>Podklad <select id="background"><option value="dark">Tmavé video</option><option value="light">Světlé video</option><option value="checker">Průhlednost</option></select></label></div>
+ </div></details>
+ <p class="small obs-note">Adresa platí pro lokální aplikaci; v Design Labu je připojení simulované.</p>
+ </section>
  <section class="panel events-panel"><div class="panel-heading"><div class="heading-inline"><h2>Super Chat a členství</h2><span class="count" id="eventCount">0</span></div><span class="small">30 s v obraze · další čekají ve frontě</span></div>
  <p class="small event-notice">Super Chaty a členství přicházejí automaticky z YouTube. Zde lze sledovat právě zobrazovanou událost, čekající frontu a případně ji přeskočit.</p>
  <div class="event-now"><div class="now-copy"><span class="overline">PRÁVĚ V OBRAZE</span><div id="eventNow">Žádná aktivní událost</div><div id="eventRemaining" class="small"></div></div><button id="skipEvent" class="subtle" disabled>Přeskočit</button></div>
  <div class="queue-title">Čekající události</div><div id="eventQueue" class="queue-list"><p class="muted">Fronta je prázdná.</p></div></section>
-</section>
-<aside class="side-column">
- <section class="panel preview-panel"><div class="panel-heading"><h2>Náhled OBS</h2><span class="small">1920 × 1080 · 16:9</span></div>
- <div id="viewport" class="viewport dark"><iframe id="frame" src="./public/preview-frame.html" title="Náhled OBS" scrolling="no"></iframe></div>
- <div class="preview-options"><label>Motiv <select id="theme"><option value="dark">Tmavý</option><option value="light">Světlý</option></select></label><label>Podklad <select id="background"><option value="dark">Tmavé video</option><option value="light">Světlé video</option><option value="checker">Průhlednost</option></select></label></div></section>
  <section class="panel featured-panel"><div class="panel-heading"><h2>Zvýrazněný komentář</h2><span id="featuredRemaining" class="small">90 s od výběru</span></div><div id="featuredNow" class="featured-empty">Žádný komentář není zvýrazněný.</div><div class="action-row"><button id="hideFeatured" class="subtle" disabled>Skrýt z obrazu</button></div></section>
- <section class="panel output-panel"><div class="panel-heading"><h2>OBS zdroj</h2><span class="small">Jeden společný overlay</span></div><div class="output-url">http://localhost:4173/overlay.html <button id="copyObs">Kopírovat</button></div><p class="small">Adresa platí pro lokální aplikaci, nikoliv pro tento online prototyp.</p></section>
- 
 </aside>
 </main><script src="./public/director.js"></script></body></html>
