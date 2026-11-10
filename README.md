@@ -72,3 +72,7 @@ Design Lab umí simulovat **Super Chat** a **nové členství** s autorem, čás
 Super Chat a členství jsou v jednom kompaktním grafickém boxu: avatar, jméno, zpráva, zvýrazněná částka nebo označení „NOVÝ ČLEN“. Zlatý/tyrkysový akcent je **na spodní hraně**. Událost nahoře uprostřed přijíždí **shora o 25 px (350 ms)** a odjíždí **nahoru o 25 px (350 ms)**. Vybraný komentář vlevo dole přijíždí **zdola o 25 px (350 ms)** a stejným směrem zase odjíždí. Horizontální vystředění události zůstává trvale na nadřazené vrstvě; animuje se pouze karta.
 
 Design Lab má simulovanou frontu událostí: každá má **30 s od začátku zobrazení**, po výstupní animaci následuje **500ms pauza**, pak další. Skrytí události přejde na další po téže pauze. Jde o designový simulátor, ne zapojenou YouTube událostní frontu na serveru.
+
+## Režisérský panel – provozní rozložení
+
+V online prototypu `director.html` byly odstraněny testovací tlačítka pro generování chatu, manuální zadávání Super Chatů, filtr „Jen otázky“ i tlačítko pro ukázkový zvýrazněný komentář. Samostatný `preview.html` nadále slouží pro grafické a zátěžové testy. Režisérský prototyp stále využívá ukázková lokální data a falešný stav připojení; automatické získávání Super Chatů a členství z YouTube není dosud implementováno do reálného lokálního serveru.

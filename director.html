@@ -2,17 +2,17 @@
 <html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Metrobus · Režisérský panel — Design Lab</title><link rel="stylesheet" href="./public/director.css"></head>
 <body>
-<header class="top"><div class="brand"><span class="logo">M</span><div><strong>METROBUS <span>STREAM PANEL</span></strong><small>REŽIE · INTERAKTIVNÍ PROTOTYP</small></div></div><div class="top-right"><span class="pill demo">DEMO · bez připojení k YouTube</span><a href="./preview.html">Testování grafiky ↗</a></div></header>
+<header class="top"><div class="brand"><span class="logo">M</span><div><strong>METROBUS <span>STREAM PANEL</span></strong><small>REŽIE · INTERAKTIVNÍ PROTOTYP</small></div></div><div class="top-right"><span class="pill demo">NÁVRH REŽIE · data simulovaná</span><a href="./preview.html">Testování grafiky ↗</a></div></header>
 <main class="workspace">
 <section class="main-column">
  <div class="section-head"><div><h1>Režie streamu</h1><p>Ovládání komentářů, zvýraznění a mimořádných událostí</p></div><span id="localClock" class="muted"></span></div>
  <section class="panel stream-panel"><div class="panel-heading"><h2>Vysílání</h2><span id="connectionStatus" class="state"><span class="dot"></span> Odpojeno</span></div>
  <div class="connect-row"><input id="streamUrl" placeholder="Odkaz na živý YouTube stream" aria-label="Adresa YouTube streamu"><button id="connect" class="primary">Připojit (demo)</button><button id="disconnect" class="subtle" disabled>Odpojit</button></div><p class="small">Simulované připojení — žádné požadavky na YouTube. Pro ostrý provoz zůstává lokální aplikace.</p></section>
- <section class="panel chat-panel"><div class="panel-heading"><div class="heading-inline"><h2>Příchozí komentáře</h2><span class="count" id="chatCount">0</span></div><div class="heading-inline"><label class="switch-label"><input type="checkbox" id="chatVisible" checked> Chat v obraze</label><button id="demoMessage" class="subtle">+ Testovací zpráva</button></div></div>
- <div class="chat-tools"><input id="chatSearch" placeholder="Hledat mezi komentáři…" aria-label="Hledat komentáře"><label class="switch-label"><input id="showOnlyQuestions" type="checkbox"> Jen otázky</label><button class="subtle" id="clearChat">Vyčistit demo</button></div>
+ <section class="panel chat-panel"><div class="panel-heading"><div class="heading-inline"><h2>Příchozí komentáře</h2><span class="count" id="chatCount">0</span></div><div class="heading-inline"><label class="switch-label"><input type="checkbox" id="chatVisible" checked> Chat v obraze</label></div></div>
+ <div class="chat-tools"><input id="chatSearch" placeholder="Hledat mezi komentáři…" aria-label="Hledat komentáře"></div>
  <div id="chatFeed" class="chat-feed" aria-live="polite"></div><div class="chat-footer"><span>Nejnovější komentáře nahoře · kliknutím zvýraznit</span><span id="chatStats">0 zpráv</span></div></section>
  <section class="panel events-panel"><div class="panel-heading"><div class="heading-inline"><h2>Super Chat a členství</h2><span class="count" id="eventCount">0</span></div><span class="small">30 s v obraze · další čekají ve frontě</span></div>
- <div class="event-controls"><select id="eventType" aria-label="Typ události"><option value="superchat">Super Chat</option><option value="membership">Nové členství</option></select><input id="eventAuthor" aria-label="Autor události" value="Martin K." placeholder="Autor"><input id="eventAmount" aria-label="Částka" value="200 Kč" placeholder="Částka"><input id="eventText" aria-label="Text události" value="Díky za skvělý stream!" placeholder="Vzkaz"><button class="primary" id="queueEvent">+ Zařadit</button></div>
+ <p class="small event-notice">Super Chaty a členství přicházejí automaticky z YouTube. Zde lze sledovat právě zobrazovanou událost, čekající frontu a případně ji přeskočit.</p>
  <div class="event-now"><div class="now-copy"><span class="overline">PRÁVĚ V OBRAZE</span><div id="eventNow">Žádná aktivní událost</div><div id="eventRemaining" class="small"></div></div><button id="skipEvent" class="subtle" disabled>Přeskočit</button></div>
  <div class="queue-title">Čekající události</div><div id="eventQueue" class="queue-list"><p class="muted">Fronta je prázdná.</p></div></section>
 </section>
@@ -20,8 +20,8 @@
  <section class="panel preview-panel"><div class="panel-heading"><h2>Náhled OBS</h2><span class="small">1920 × 1080 · 16:9</span></div>
  <div id="viewport" class="viewport dark"><iframe id="frame" src="./public/preview-frame.html" title="Náhled OBS" scrolling="no"></iframe></div>
  <div class="preview-options"><label>Motiv <select id="theme"><option value="dark">Tmavý</option><option value="light">Světlý</option></select></label><label>Podklad <select id="background"><option value="dark">Tmavé video</option><option value="light">Světlé video</option><option value="checker">Průhlednost</option></select></label></div></section>
- <section class="panel featured-panel"><div class="panel-heading"><h2>Zvýrazněný komentář</h2><span id="featuredRemaining" class="small">90 s od výběru</span></div><div id="featuredNow" class="featured-empty">Žádný komentář není zvýrazněný.</div><div class="action-row"><button id="hideFeatured" class="subtle" disabled>Skrýt z obrazu</button><button id="restoreFeatured" class="subtle">Ukázkový komentář</button></div></section>
+ <section class="panel featured-panel"><div class="panel-heading"><h2>Zvýrazněný komentář</h2><span id="featuredRemaining" class="small">90 s od výběru</span></div><div id="featuredNow" class="featured-empty">Žádný komentář není zvýrazněný.</div><div class="action-row"><button id="hideFeatured" class="subtle" disabled>Skrýt z obrazu</button></div></section>
  <section class="panel output-panel"><div class="panel-heading"><h2>OBS zdroj</h2><span class="small">Jeden společný overlay</span></div><div class="output-url">http://localhost:4173/overlay.html <button id="copyObs">Kopírovat</button></div><p class="small">Adresa platí pro lokální aplikaci, nikoliv pro tento online prototyp.</p></section>
- <section class="panel tools-panel"><div class="panel-heading"><h2>Testování provozu</h2></div><div class="action-row"><button id="flood" class="subtle">+ 10 zpráv</button><button id="autoFeed" class="subtle">Spustit simulaci</button><button id="reset" class="subtle">Reset</button></div><p class="small" id="simulationStatus">Simulace je zastavená.</p></section>
+ 
 </aside>
 </main><script src="./public/director.js"></script></body></html>
