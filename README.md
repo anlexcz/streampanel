@@ -36,3 +36,11 @@ Vrstvy se vzájemně nevypínají. Pro OBS se používá pouze `/overlay.html`. 
 Knihovna `youtube-chat@2.2.0` je neoficiální a není potvrzené, zda na dnešním YouTube přijímá zprávy. Nejdříve otestujte na skutečně živém streamu s otevřeným chatem. Běh lokálně vyžaduje Node.js; není to samostatné EXE.
 
 CSV export obsahuje posledních 200 zpráv aktuální relace; zprávy jsou průběžně zapisovány také do `data/chat.jsonl`. Program poslouchá jen na `127.0.0.1`. Prototyp nemá autentizaci a není určen k vystavení na veřejný internet.
+
+## Grafické motivy
+
+V lokální režii vyberte **Vzhled overlaye → Tmavý/Světlý** a nastavení uložte. Oba motivy jsou dostupné také v [Design Labu](https://anlexcz.github.io/streampanel/preview.html). Pozadí streamu zůstává transparentní. Motiv platí pro celý jeden OBS zdroj.
+
+## Aktuální pravidla chatu
+
+Automatický chat zobrazuje nejvýše **5 posledních běžných zpráv**, v pořadí od nejstarší nahoře po nejnovější dole. Příchod nové zprávy odstraní nejstarší viditelnou zprávu. Zprávy samy po čase nemizí a všechny viditelné karty se při každém novém stavu znovu vykreslí (tedy znovu animují). Server drží v RAM nejvýše **200** zpráv aktuálního streamu; jednotlivý text ořízne na **1500 znaků**. Vysoké nebo dlouhé zprávy mohou přesáhnout rezervovanou výšku obrazovky. Nastavení počtu zpráv, stárnutí, plynulé animace posunu a omezení výšky jsou otevřené úkoly pro další iteraci.

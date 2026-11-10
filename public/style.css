@@ -56,3 +56,44 @@ body.overlay:not(.overlay-composite) #stage{display:flex;flex-direction:column;g
 body.overlay:not(.overlay-composite)[data-mode=chat] #stage{align-items:flex-end}
 @keyframes mbFadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){body.overlay .stack-card,body.overlay .featured-card,body.overlay .promo-banner{animation:none}body.overlay .obs-layer{transition:none}}
+
+
+/* Two visual variants. Same dimensions, spacing and maximum 5px card radius. */
+body.overlay {
+  --mb-card:rgba(10,16,24,.86);
+  --mb-text:#f3f8fc;
+  --mb-heading:#f3f8fc;
+  --mb-accent:#87cefa;
+  --mb-band:rgba(58,63,69,.94);
+  --mb-avatar-bg:rgba(135,206,250,.18);
+  --mb-avatar-text:#ccecff;
+  --mb-shadow:0 8px 18px rgba(0,0,0,.20);
+}
+body.overlay[data-theme="light"] {
+  --mb-card:rgba(245,249,253,.94);
+  --mb-text:#182431;
+  --mb-heading:#111e2c;
+  --mb-accent:#3d9dcc;
+  --mb-band:rgba(207,223,235,.95);
+  --mb-avatar-bg:rgba(61,157,204,.16);
+  --mb-avatar-text:#1b5877;
+  --mb-shadow:0 7px 18px rgba(7,25,41,.20);
+}
+body.overlay .stack-card,
+body.overlay .featured-card,
+body.overlay .promo-banner {
+  background:var(--mb-card);color:var(--mb-text);box-shadow:var(--mb-shadow);
+}
+body.overlay .stack-card {border-bottom-color:var(--mb-accent)}
+body.overlay .stack-avatar,
+body.overlay .featured-avatar {background:var(--mb-avatar-bg);color:var(--mb-avatar-text)}
+body.overlay .stack-author,
+body.overlay .featured-author {color:var(--mb-heading)}
+body.overlay .stack-text,
+body.overlay .featured-text {color:var(--mb-text)}
+body.overlay .featured-band {background:var(--mb-band);color:var(--mb-heading)}
+body.overlay .promo-banner::before {background:var(--mb-accent)}
+body.overlay .promo-banner__text {color:var(--mb-text)}
+
+/* Theme selector in local control panel */
+.theme-select{background:#101822;border:1px solid #3a4c60;color:#fff;border-radius:5px;padding:10px;width:100%;font:inherit}

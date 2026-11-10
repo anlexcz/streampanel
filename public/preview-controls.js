@@ -16,6 +16,7 @@
  }
  function state(){
    return {
+     theme:$('overlayTheme').value,
      messages:$('chat').checked?messages:[],
      featured:$('featured').checked?{id:'featured:'+sequence,author:$('name').value||'Divák',text:$('message').value||'Ukázkový komentář'}:null,
      ticker:$('ticker').checked?{until:12345,text:'Sledujte Metrobus také na Instagramu @metrobuscz'}:null
@@ -24,7 +25,7 @@
  function update(){if(ready)frame.contentWindow.postMessage({type:'metrobus-preview',state:state()},location.origin);}
  frame.addEventListener('load',()=>{ready=true;update()});
  window.addEventListener('message',event=>{if(event.origin===location.origin && event.source===frame.contentWindow && event.data?.type==='metrobus-preview-ready'){ready=true;update()}});
- for(const id of ['chat','featured','ticker'])$(id).addEventListener('change',update);
+ for(const id of ['chat','featured','ticker','overlayTheme'])$(id).addEventListener('change',update);
  for(const id of ['name','message'])$(id).addEventListener('input',()=>{sequence++;update()});
  $('add').addEventListener('click',()=>{sequence++;messages=[...messages,{id:String(sequence),author:$('name').value||'Divák',text:$('message').value||'Ukázkový komentář',type:'message'}].slice(-5);update()});
  $('long').addEventListener('click',()=>{$('message').value='Jak se bude měnit provoz v Praze s novým grafikonem a počítá se také s dalšími úpravami tramvajových linek? Zajímalo by mě, jestli to bude mít nějaký dopad na přestupy.';sequence++;update()});

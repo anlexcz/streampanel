@@ -49,9 +49,13 @@ if(mode==='unified'){
     layer(kind==='highlight'?(s.featured?[s.featured]:[]):kind==='ticker'?(banner?[{id:String(banner.until),text:banner.text}]:[]):(s.messages||[]).slice(-5));
   };
 }
+function update(s){
+  document.body.dataset.theme=(s.theme||s.conf?.theme)==='light'?'light':'dark';
+  render(s);
+}
 if(document.body.dataset.preview==='true'){
-  addEventListener('message',e=>{if(e.origin!==location.origin||e.data?.type!=='metrobus-preview')return;render(e.data.state)});
+  addEventListener('message',e=>{if(e.origin!==location.origin||e.data?.type!=='metrobus-preview')return;update(e.data.state)});
   parent.postMessage({type:'metrobus-preview-ready'},location.origin);
 }else{
-  new EventSource('/events').onmessage=e=>{try{render(JSON.parse(e.data))}catch(err){console.error('Overlay:',err)}};
+  new EventSource('/events').onmessage=e=>{try{update(JSON.parse(e.data))}catch(err){console.error('Overlay:',err)}};
 }
