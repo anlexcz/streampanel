@@ -13,4 +13,14 @@ if(mode==='unified'){
  const layer=makeLayer(document.querySelector('#stage'),mode);
  render=state=>layer(mode==='highlight'?(state.featured?[state.featured]:[]):mode==='ticker'?(state.ticker?[{id:String(state.ticker.until),text:state.ticker.text}]:[]):state.messages.slice(-5));
 }
-new EventSource('/events').onmessage=e=>{try{render(JSON.parse(e.data))}catch(error){console.error('Chyba overlaye',error)}};
+if(document.body.dataset.preview==='true'){
+  window.addEventListener('message',event=>{
+    if(event.origin!==location.origin || event.data?.type!=='metrobus-preview')return;
+    try{render(event.data.state)}catch(error){console.error('Chyba náhledu',error)}
+  });
+  window.parent.postMessage({type:'metrobus-preview-ready'},location.origin);
+}else{
+  new EventSource('/events').onmessage=e=>{
+    try{render(JSON.parse(e.data))}catch(error){console.error('Chyba overlaye',error)}
+  };
+}

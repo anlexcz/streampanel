@@ -1,23 +1,22 @@
 :root{font-family:Arial,system-ui,sans-serif;color:#fff;background:#121923}*{box-sizing:border-box}body{margin:0}header{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;background:#1c2532}header h1{font-size:21px;margin:0}header h1 span{background:#ff3600;padding:9px 12px;border-radius:7px}small{font-size:11px;color:#8b9aaa}main{max-width:1300px;margin:20px auto;padding:0 15px}section{background:#202a38;border:1px solid #334252;border-radius:14px;padding:17px;margin-bottom:15px}h2{font-size:17px;margin:0 0 15px}.columns{display:grid;grid-template-columns:1.8fr 1fr;gap:15px}.line{display:flex;gap:8px}input:not([type=checkbox]),textarea{background:#101822;border:1px solid #3a4c60;padding:10px;border-radius:7px;color:#fff;width:100%;font:inherit}button{background:#ff3600;color:white;padding:10px 14px;border:0;border-radius:7px;font-weight:bold;cursor:pointer}.sub{background:#405064}#messages{max-height:65vh;overflow:auto}#messages article{background:#293748;padding:13px;border-radius:9px;margin:8px 0;overflow-wrap:anywhere}article time{float:right;color:#90a1b4;font-size:12px}article strong,#featured b{color:#ff7857}article p{margin:7px 0}#featured{background:#15202d;border-radius:9px;padding:13px;margin-bottom:10px}aside p{color:#acb8c8;font-size:13px}textarea{margin:12px 0}.overlay{background:transparent!important;overflow:hidden}.overlay #stage{display:flex;flex-direction:column;gap:10px;padding:14px}.overlay article{background:rgba(20,28,40,.93);border-left:5px solid #ff3600;border-radius:10px;padding:16px 21px;max-width:94%;width:max-content;min-width:220px;box-shadow:0 6px 20px #0005;animation:in .35s ease-out;overflow-wrap:anywhere}.overlay b{font-size:20px;color:#ff7857}.overlay p{font-size:25px;color:#fff;margin:8px 0 0}.overlay[data-mode=chat] b{font-size:15px}.overlay[data-mode=chat] p{font-size:18px}.overlay[data-mode=ticker] article{border-left-color:#25bcca}@keyframes in{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}@media(max-width:850px){.columns{grid-template-columns:1fr}.line{flex-wrap:wrap}header h1{font-size:17px}}
-/* Composite: one transparent OBS source, independently controlled visual layers */
-html:has(.overlay-composite), body.overlay-composite { margin:0; padding:0; background:transparent!important; overflow:hidden; }
-.overlay-composite #canvas { position:fixed; inset:0; width:100vw; height:100vh; max-width:none; margin:0; padding:0; background:transparent; pointer-events:none; }
-.overlay-composite .obs-layer { position:absolute; display:flex; flex-direction:column; gap:10px; min-width:0; margin:0; padding:0; border:0; background:transparent; border-radius:0; opacity:0; transition:opacity 230ms ease; }
-.overlay-composite .obs-layer.visible {opacity:1}
-.overlay-composite #chat-layer {right:2.5%;bottom:5%;width:29%;align-items:flex-end}
-.overlay-composite #chat-layer .message-card {width:max-content;max-width:100%;align-self:flex-end;text-align:left}
-.overlay-composite #featured-layer {left:3%;bottom:6%;width:57%}
-.overlay-composite #ticker-layer {left:3%;top:5%;width:55%}
-.overlay-composite #event-layer {right:3%;top:5%;width:35%}
-.overlay-composite .message-card {background:rgba(15,23,34,.91);border-left:5px solid #ff3600;box-shadow:0 8px 24px rgba(0,0,0,.38);border-radius:12px;padding:14px 18px;overflow-wrap:anywhere;max-width:100%;animation:overlay-appear 280ms ease-out}
-.overlay-composite .message-card b {display:block;color:#ff6b45;font:700 clamp(13px,1.3vw,23px)/1.2 Arial,sans-serif;margin-bottom:5px}
-.overlay-composite .message-card p {color:#fff;font:500 clamp(15px,1.65vw,30px)/1.25 Arial,sans-serif;margin:0}
-.overlay-composite #chat-layer .message-card {padding:9px 13px;border-left-width:3px}
-.overlay-composite #chat-layer .message-card b {font-size:clamp(12px,.85vw,17px)}
-.overlay-composite #chat-layer .message-card p {font-size:clamp(13px,1.1vw,21px)}
-.overlay-composite #featured-layer .message-card {border-left-width:7px;padding:20px 25px}
-.overlay-composite #featured-layer .message-card p {font-size:clamp(19px,2vw,38px)}
-.overlay-composite #ticker-layer .message-card {border-left-color:#27c3c2}
-.overlay-composite #ticker-layer .message-card b {color:#62e1dd}
-.overlay-composite #event-layer .message-card {border-left-color:#ffbf4c}
-@keyframes overlay-appear {from{transform:translateY(14px)}to{transform:translateY(0)}}
+/* One transparent 16:9 OBS canvas with four independently controlled layers. */
+html:has(.overlay-composite), body.overlay-composite { margin: 0; background: transparent !important; overflow: hidden; }
+.overlay-composite #canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; background: transparent; pointer-events: none; }
+.overlay-composite .obs-layer { position: absolute; display: flex; flex-direction: column; gap: 10px; opacity: 0; transition: opacity 230ms ease; min-width: 0; }
+.overlay-composite .obs-layer.visible { opacity: 1; }
+.overlay-composite #chat-layer { right: 2.5%; bottom: 5%; width: 29%; align-items: stretch; }
+.overlay-composite #featured-layer { left: 3%; bottom: 6%; width: 57%; }
+.overlay-composite #ticker-layer { left: 3%; top: 5%; width: 55%; }
+.overlay-composite #event-layer { right: 3%; top: 5%; width: 35%; }
+.overlay-composite .message-card { background: rgba(15, 23, 34, .91); border-left: 5px solid #ff3600; box-shadow: 0 8px 24px rgba(0,0,0,.38); border-radius: 12px; padding: 14px 18px; overflow-wrap: anywhere; max-width: 100%; animation: overlay-appear 280ms ease-out; }
+.overlay-composite .message-card b { display: block; color: #ff6b45; font: 700 clamp(13px,1.3vw,23px)/1.2 Arial,sans-serif; margin-bottom: 5px; }
+.overlay-composite .message-card p { color: #fff; font: 500 clamp(15px,1.65vw,30px)/1.25 Arial,sans-serif; margin: 0; }
+.overlay-composite #chat-layer .message-card { padding: 9px 13px; border-left-width: 3px; }
+.overlay-composite #chat-layer .message-card b { font-size: clamp(12px, .85vw, 17px); }
+.overlay-composite #chat-layer .message-card p { font-size: clamp(13px, 1.1vw, 21px); }
+.overlay-composite #featured-layer .message-card { border-left-width: 7px; padding: 20px 25px; }
+.overlay-composite #featured-layer .message-card p { font-size: clamp(19px, 2vw, 38px); }
+.overlay-composite #ticker-layer .message-card { border-left-color: #27c3c2; }
+.overlay-composite #ticker-layer .message-card b { color: #62e1dd; }
+.overlay-composite #event-layer .message-card { border-left-color: #ffbf4c; }
+@keyframes overlay-appear { from { transform: translateY(14px); } to { transform: translateY(0); } }

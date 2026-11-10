@@ -1,26 +1,29 @@
 # Metrobus Stream Panel Lite
 
-Lokální režie YouTube chatu. **Jediný OBS zdroj se čtyřmi nezávislými vrstvami.**
+Lokální režie YouTube chatu a **jeden společný transparentní OBS overlay s nezávislými vrstvami**.
 
-## Stažení a spuštění
+## Instalace a spuštění na Windows
 
-1. Nainstalujte [Node.js LTS](https://nodejs.org/).
-2. V [GitHub Actions](https://github.com/anlexcz/streampanel/actions) otevřete poslední úspěšný běh **Windows package** a v sekci Artifacts stáhněte `MetrobusStreamPanel-win-x64`.
-3. Rozbalte ZIP. Ve složce `MetrobusStreamPanel` spusťte `Spustit-Stream-Panel.bat`, konzolové okno nechte otevřené.
-4. Webová režie je na `http://localhost:4173`.
-5. Otestujte tlačítkem **Testovací zpráva**, kliknutím na **Zvýraznit** a volbou **Zobrazit hned** u informační zprávy.
-6. Do OBS vložte **jeden zdroj Prohlížeč** s adresou `http://localhost:4173/overlay.html`, šířkou 1920 a výškou 1080. Zdroj roztáhněte přes celou scénu.
-7. Vložte URL veřejného právě běžícího YouTube livestreamu s dostupným chatem a stiskněte **Připojit**.
+1. Nainstalujte [Node.js LTS](https://nodejs.org/) (nutné i při použití ZIP z Actions).
+2. V [GitHub Actions](https://github.com/anlexcz/streampanel/actions) otevřete úspěšný běh **Windows package** a stáhněte artefakt `MetrobusStreamPanel-win-x64`.
+3. Rozbalte ZIP, otevřete složku `MetrobusStreamPanel` a spusťte `Spustit-Stream-Panel.bat`. Nezavírejte běžící okno programu.
+4. Pokud se prohlížeč neotevře automaticky, přejděte na **http://localhost:4173**.
+5. Nejdříve stiskněte **Testovací zpráva**. V [náhledu overlaye](http://localhost:4173/overlay.html) ověřte chat, pak v režii klikněte **Zvýraznit** a zkontrolujte, že běžný chat zůstává viditelný.
+6. Zvolte informační zprávu a **Zobrazit hned**. Lze ji zobrazit souběžně s chatem a zvýrazněním.
+7. V OBS vložte **jediný** zdroj typu Prohlížeč (Browser Source): `http://localhost:4173/overlay.html`, nastavte **1920 × 1080** a umístěte přes celou scénu. Pozadí stránky je průhledné.
+8. Vložte odkaz na aktuálně vysílané veřejné YouTube video, klikněte **Připojit** a počkejte na zprávy.
 
-## Vrstvy společného OBS zdroje
+## Vrstvy jedné stránky
 
-- Chat: vpravo dole, posledních pět běžných komentářů.
-- Zvýrazněný komentář: vlevo dole; nezakrývá automatický chat jako stav aplikace.
-- Informační zprávy: nahoře vlevo, lze zobrazit současně s oběma druhy komentářů.
-- Významné události: prostor nahoře vpravo připravený pro budoucí funkce (zatím neaktivní).
+- **Chat** – až pět běžných zpráv vpravo dole.
+- **Zvýrazněný komentář** – ruční výběr vlevo dole, zůstane až do skrytí.
+- **Informační banner** – nahoře vlevo; může běžet současně s oběma dalšími vrstvami.
+- **Události** – rezervovaná oblast vpravo nahoře; samostatné vykreslování událostí zatím není hotové.
 
-Původní samostatné adresy `/chat.html`, `/highlight.html` a `/ticker.html` zůstávají pro kompatibilitu, ale normálně se nepoužívají.
+Vrstvy se vzájemně nevypínají. Pro OBS se používá pouze `/overlay.html`. Starší samostatné adresy `/chat.html`, `/highlight.html` a `/ticker.html` jsou zachovány pro kompatibilitu.
 
-## Známá omezení
+## Omezení prototypu
 
-YouTube sběrač používá starší neoficiální knihovnu `youtube-chat@2.2.0`. Živý sběr je nutné otestovat na skutečně běžícím streamu; nemusí fungovat při změnách YouTube. Na počítači musí být Node.js a panel běží jen na localhostu, bez přihlášení. CSV export obsahuje posledních 200 zpráv relace, průběžný log je `data/chat.jsonl`.
+Knihovna `youtube-chat@2.2.0` je neoficiální a není potvrzené, zda na dnešním YouTube přijímá zprávy. Nejdříve otestujte na skutečně živém streamu s otevřeným chatem. Běh lokálně vyžaduje Node.js; není to samostatné EXE.
+
+CSV export obsahuje posledních 200 zpráv aktuální relace; zprávy jsou průběžně zapisovány také do `data/chat.jsonl`. Program poslouchá jen na `127.0.0.1`. Prototyp nemá autentizaci a není určen k vystavení na veřejný internet.

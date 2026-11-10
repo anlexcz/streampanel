@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Metrobus Stream Panel · Design Lab</title><link rel="stylesheet" href="./public/preview.css"></head>
+<body><header class="header"><div class="brand"><span class="brand-mark">M</span><div><strong>METROBUS <em>DESIGN LAB</em></strong><small>Náhled overlaye bez streamu a bez instalace</small></div></div>
+<a href="https://github.com/anlexcz/streampanel" target="_blank" rel="noopener">Zdrojový kód na GitHubu</a></header>
+<main class="layout"><div class="controls">
+<h1>Testování grafiky</h1><p>Tohle je statický náhled na GitHub Pages. Vykreslení zpráv používá stejný <code>overlay.js</code> a <code>style.css</code> jako lokální OBS zdroj.</p>
+<div class="panel"><h2>Vrstvy</h2>
+<label><input id="chat" type="checkbox" checked> Průběžný chat</label>
+<label><input id="featured" type="checkbox" checked> Zvýrazněný komentář</label>
+<label><input id="ticker" type="checkbox" checked> Informační banner</label>
+</div>
+<div class="panel"><h2>Testovací komentáře</h2>
+<div class="buttons"><button id="add">Přidat komentář</button><button id="long" class="muted">Dlouhý komentář</button><button id="reset" class="muted">Obnovit ukázku</button></div>
+<label for="name">Autor</label><input id="name" value="Divák Metrobusu" maxlength="80">
+<label for="message">Text komentáře</label><textarea id="message" rows="3">Co si myslíte o novém grafikonu?</textarea>
+<button id="select">Zvýraznit tento komentář</button>
+</div>
+<div class="panel"><h2>Vzhled náhledu</h2>
+<label for="background">Podklad</label><select id="background"><option value="checker">Průhlednost – šachovnice</option><option value="dark">Tmavé video</option><option value="light">Světlé video</option></select>
+<p class="hint">V reálném OBS je podklad průhledný. Zde slouží pouze k posouzení čitelnosti.</p>
+</div>
+<div class="panel"><h2>Co náhled nedělá</h2><p class="hint">Nepřipojuje se k YouTube, neposílá příkazy do běžícího panelu a neukládá nastavení. Nové CSS se na Pages projeví po nasazení commitu.</p></div>
+</div>
+<section class="preview-area"><div class="preview-top"><h2>Výstup OBS</h2><span>1920 × 1080 · 16:9</span></div>
+<div id="viewport" class="viewport checker"><iframe id="frame" title="Testovací OBS overlay" src="./public/preview-frame.html" scrolling="no"></iframe></div>
+<p class="caption">Průběžný chat vpravo dole, vybraný komentář vlevo dole, informační zpráva nahoře vlevo. Vše současně v jednom zdroji.</p></section>
+</main><script src="./public/preview-controls.js"></script></body></html>
