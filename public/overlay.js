@@ -33,95 +33,133 @@ function makeLayer(el,kind){
 
 const CHAT_MAX_ITEMS=5;
 const CHAT_MAX_AGE_MS=60000;
+const CHAT_DISPLAY_INTERVAL_MS=1800;
+const CHAT_QUEUE_LIMIT=40;
+
+/* Message arrival only appends to the queue. The renderer runs at its own pace. */
 function makeChatLayer(el){
-  let latest=[];
-  const born=new Map();
+  const pending=[];
+  const known=new Set();
+  const visible=[];
   const cards=new Map();
-  const discarded=new Set();
+  let lastSnapshot=[];
   let initialized=false;
-  function refresh(){
-    if(!el)return;
-    const now=Date.now();
-    const eligible=latest.filter(m=>{
-      if(m.type==='superchat')return false;
+
+  const stamp=m=>{
+    const t=Date.parse(m.time||'');
+    return Number.isFinite(t)&&t<=Date.now()+120000?t:Date.now();
+  };
+  const fresh=m=>Date.now()-stamp(m)<CHAT_MAX_AGE_MS;
+
+  function sync(entries){
+    lastSnapshot=(entries||[]).filter(m=>m&&m.type!=='superchat');
+    // Initial snapshot should not replay the last 200 messages on a new OBS load.
+    const take=initialized?lastSnapshot:lastSnapshot.slice(-CHAT_MAX_ITEMS);
+    initialized=true;
+    for(const m of take){
       const id=String(m.id);
-      const stamp=Date.parse(m.time||'');
-      // Keep the authoritative reception time; allow the test lab to age a message.
-      if(Number.isFinite(stamp)&&stamp<=now+120000){
-        if(born.get(id)!==stamp)born.set(id,stamp);
-      }else if(!born.has(id)){
-        born.set(id,now);
-      }
-      return !discarded.has(id)&&now-born.get(id)<CHAT_MAX_AGE_MS;
-    }).slice(-CHAT_MAX_ITEMS);
-    const desired=new Set(eligible.map(m=>String(m.id)));
+      if(known.has(id))continue;
+      known.add(id);
+      if(fresh(m))pending.push({...m,id});
+    }
+    while(pending.length>CHAT_QUEUE_LIMIT)pending.shift();
+    // Limit the identity cache without allowing the same still-visible ID to reappear.
+    if(known.size>1000){
+      const retained=new Set(lastSnapshot.map(m=>String(m.id)));
+      for(const m of pending)retained.add(m.id);
+      for(const m of visible)retained.add(m.id);
+      known.clear();for(const id of retained)known.add(id);
+    }
+  }
+
+  function paint(){
+    if(!el)return;
+    const desired=new Set(visible.map(m=>m.id));
     const before=new Map();
     for(const [id,node] of cards)before.set(id,node.getBoundingClientRect());
+
     for(const [id,node] of cards){
-      if(!desired.has(id)){
-        const r=node.getBoundingClientRect(),host=el.getBoundingClientRect();
-        if(initialized&&r.height>0){
-          const ghost=node.cloneNode(true);
-          ghost.classList.add('chat-ghost');
-          ghost.style.cssText='position:absolute;top:'+(r.top-host.top)+'px;right:'+(host.right-r.right)+'px;width:'+r.width+'px;max-width:none;margin:0;pointer-events:none;';
-          el.appendChild(ghost);
-          ghost.animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-10px)'}],{duration:240,easing:'ease-out'}).onfinish=()=>ghost.remove();
-          setTimeout(()=>ghost.remove(),350);
-        }
-        node.remove();cards.delete(id);
+      if(desired.has(id))continue;
+      const r=node.getBoundingClientRect(),host=el.getBoundingClientRect();
+      if(r.height){
+        const ghost=node.cloneNode(true);
+        ghost.classList.add('chat-ghost');
+        ghost.style.cssText='position:absolute;top:'+(r.top-host.top)+'px;right:'+(host.right-r.right)+'px;width:'+r.width+'px;max-width:none;margin:0;pointer-events:none;';
+        el.appendChild(ghost);
+        const animation=ghost.animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-10px)'}],{duration:220,easing:'ease-out'});
+        animation.onfinish=()=>ghost.remove();
+        setTimeout(()=>ghost.remove(),320);
       }
+      node.remove();cards.delete(id);
     }
-    const added=[];
-    for(const m of eligible){
-      const id=String(m.id);
-      let node=cards.get(id);
+
+    const added=new Set();
+    for(const m of visible){
+      let node=cards.get(m.id);
       if(!node){
-        const t=document.createElement('template');
-        t.innerHTML=card(m,'chat');
-        node=t.content.firstElementChild;
-        node.dataset.messageId=id;
+        const template=document.createElement('template');
+        template.innerHTML=card(m,'chat');
+        node=template.content.firstElementChild;
+        node.dataset.messageId=m.id;
         node.classList.add('chat-item');
-        cards.set(id,node);
-        added.push(node);
+        cards.set(m.id,node);
+        added.add(m.id);
       }
       el.appendChild(node);
     }
-    // Fit the newest messages within the allotted vertical height.
-    // Oversized old cards are discarded rather than clipping the new message.
-    const limit=Math.floor(window.innerHeight*0.42);
-    const gap=8;
-    function usedHeight(){
-      return [...cards.values()].reduce((sum,node)=>sum+node.getBoundingClientRect().height,0)+Math.max(0,cards.size-1)*gap;
+
+    const heightLimit=Math.floor(window.innerHeight*.42);
+    const usedHeight=()=>[...cards.values()].reduce((s,node)=>s+node.getBoundingClientRect().height,0)+Math.max(0,cards.size-1)*8;
+    while(visible.length>1&&usedHeight()>heightLimit){
+      const removed=visible.shift();
+      cards.get(removed.id)?.remove();
+      cards.delete(removed.id);
     }
-    while(cards.size>1&&usedHeight()>limit){
-      const [oldId,oldNode]=cards.entries().next().value;
-      discarded.add(oldId);oldNode.remove();cards.delete(oldId);
-    }
-    for(const [id,node] of cards){
-      if(added.includes(node)){
-        if(initialized&& !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-          node.animate([{opacity:0,transform:'translateY(18px)'},{opacity:1,transform:'translateY(0)'}],
-            {duration:260,easing:'cubic-bezier(.2,.8,.2,1)'});
-        }
-      }else{
-        const old=before.get(id),next=node.getBoundingClientRect();
-        if(old&&Math.abs(old.top-next.top)>1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-          node.animate([{transform:'translateY('+(old.top-next.top)+'px)'},{transform:'translateY(0)'}],
-            {duration:300,easing:'cubic-bezier(.2,.8,.2,1)'});
-        }
+
+    const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!reduced)for(const [id,node] of cards){
+      const previous=before.get(id),next=node.getBoundingClientRect();
+      if(added.has(id)){
+        node.animate([{opacity:0,transform:'translateY(18px)'},{opacity:1,transform:'translateY(0)'}],{duration:260,easing:'ease-out'});
+      }else if(previous&&Math.abs(previous.top-next.top)>1){
+        node.animate([{transform:'translateY('+(previous.top-next.top)+'px)'},{transform:'translateY(0)'}],{duration:300,easing:'ease-out'});
       }
     }
     el.classList.toggle('visible',cards.size>0);
-    // Prevent the lookup maps from accumulating an entire long livestream.
-    const active=new Set(latest.map(m=>String(m.id)));
-    for(const id of born.keys())if(!active.has(id))born.delete(id);
-    for(const id of discarded)if(!active.has(id))discarded.delete(id);
-    initialized=true;
   }
-  setInterval(refresh,1000);
-  return entries=>{latest=entries||[];refresh()};
-}
 
+  function tick(){
+    // Expiration runs independently of chat traffic.
+    const snapshotIds=new Set(lastSnapshot.map(m=>String(m.id)));
+    const before=visible.length;
+    for(let i=visible.length-1;i>=0;i--){
+      const m=visible[i];
+      if(!fresh(m)||!snapshotIds.has(m.id))visible.splice(i,1);
+    }
+    for(let i=pending.length-1;i>=0;i--){
+      const m=pending[i];
+      const current=lastSnapshot.find(x=>String(x.id)===m.id);
+      if(!current||!fresh(current))pending.splice(i,1);
+      else pending[i]={...current,id:m.id};
+    }
+    // One message at most per cycle, even if hundreds arrive between cycles.
+    if(pending.length){
+      const next=pending.shift();
+      visible.push(next);
+      while(visible.length>CHAT_MAX_ITEMS)visible.shift();
+    }
+    if(visible.length!==before||pending.length||before)paint();
+  }
+  setInterval(tick,CHAT_DISPLAY_INTERVAL_MS);
+  // Expire an idle chat without waiting for the next incoming message.
+  setInterval(()=>{
+    if(!visible.length&&!pending.length)return;
+    const prev=visible.length;
+    for(let i=visible.length-1;i>=0;i--)if(!fresh(visible[i]))visible.splice(i,1);
+    if(prev!==visible.length)paint();
+  },1000);
+  return sync;
+}
 let render;
 if(mode==='unified'){
   const chat=makeChatLayer(document.querySelector('#chat-layer'));
