@@ -11,6 +11,50 @@
  const time=()=>new Date().toISOString();
  messages=messages.map(m=>({...m,time:time()}));
  let ready=false;
+ let loopTimer=null;
+ let generatedCount=0;
+ const sampleAuthors=['Petr Novák','Andrea K.','Martin','Lucie','Šotouš z Prahy','Tomáš','Klára','Honza','Metrobus divák'];
+ const sampleTexts=[
+   'Zdravím celé studio!',
+   'Co říkáte na nový grafikon?',
+   'Bude záznam dnešního streamu?',
+   'Kdy vyjede další nová tramvaj?',
+   'To je zajímavá informace.',
+   'Díky za odpověď!',
+   'Jak to bude s přestupy?',
+   'A co změny na Smíchově?',
+   'Půjde to i během výluk?',
+   'Mám ještě jednu otázku ohledně jízdních řádů.',
+   'Zdravím z druhého konce Prahy!',
+   'Zajímá mě, jak se bude vyvíjet provoz v Praze po změnách grafikonu a zda se projeví také na návaznostech jednotlivých linek.'
+ ];
+ const sample=(arr)=>arr[Math.floor(Math.random()*arr.length)];
+ function insertGenerated(){
+   const batch=Number($('loopBatch').value)||1;
+   for(let i=0;i<batch;i++){
+     sequence++;generatedCount++;
+     messages.push({id:'loop-'+sequence,author:sample(sampleAuthors),text:sample(sampleTexts),type:'message',time:time()});
+   }
+   messages=messages.slice(-200);
+   update();
+   $('loopStatus').textContent='Smyčka běží · vygenerováno '+generatedCount+' zpráv';
+ }
+ function stopLoop(){
+   if(loopTimer!==null)clearInterval(loopTimer);
+   loopTimer=null;
+   $('loopStart').disabled=false;
+   $('loopStop').disabled=true;
+   $('loopStatus').textContent='Smyčka zastavená · vygenerováno '+generatedCount+' zpráv';
+ }
+ function startLoop(){
+   stopLoop();
+   $('chat').checked=true;
+   $('loopStart').disabled=true;
+   $('loopStop').disabled=false;
+   insertGenerated();
+   loopTimer=setInterval(insertGenerated,Number($('loopSpeed').value)||500);
+ }
+
  function scale(){
    const ratio=viewport.clientWidth/1920;
    frame.style.transform='scale('+ratio+')';
@@ -38,6 +82,15 @@
    messages=messages.slice(-200);update();
  });
  $('age').addEventListener('click',()=>{messages=messages.map(m=>({...m,time:new Date(Date.parse(m.time)-61000).toISOString()}));update()});
+ $('loopStart').addEventListener('click',startLoop);
+ $('loopStop').addEventListener('click',stopLoop);
+ $('loopSpeed').addEventListener('input',()=>{
+   const ms=Number($('loopSpeed').value);
+   $('speedLabel').textContent=ms<1000?ms+' ms':(ms/1000).toLocaleString('cs-CZ')+' s';
+   if(loopTimer!==null){clearInterval(loopTimer);loopTimer=setInterval(insertGenerated,ms)}
+ });
+ $('reset').addEventListener('click',()=>{stopLoop();generatedCount=0;$('loopStatus').textContent='Smyčka je zastavená.'});
+ addEventListener('pagehide',stopLoop);
  $('background').addEventListener('change',()=>{viewport.className='viewport '+$('background').value});
  new ResizeObserver(scale).observe(viewport);
  scale();

@@ -48,3 +48,7 @@ Automatický chat zobrazuje nejvýše **5 posledních běžných zpráv**, v po�
 ## Posouvání chatu (nové)
 
 Každá viditelná zpráva má vlastní DOM prvek: nová se přidá dole, starší se plynule posunou nahoru bez opakování své vstupní animace. Na obrazovce zůstává nejvýše **5 zpráv**, každá maximálně **60 sekund od přijetí**. Chat zabírá nejvýše **42 % výšky obrazu**; dlouhé texty jsou omezené na čtyři řádky a pokud se pět karet nevejde, zahodí se nejstarší. Zvýrazněný komentář a informační banner nejsou časovačem průběžného chatu ovlivněny. Design Lab umožňuje simulovat příval zpráv a jejich zestárnutí.
+
+## Automatický zátěžový test v Design Labu
+
+Sekce **Automatický příval** vytváří simulované komentáře ve smyčce. Lze nastavit interval **100–2000 ms** a dávku **1, 3, 5 nebo 10 zpráv**. Tlačítka **Spustit smyčku/Zastavit** generátor ovládají. Smyčka běží pouze v náhledu GitHub Pages, nikoliv v lokálním programu ani v reálném YouTube chatu. Paměť simulace je omezena na posledních 200 zpráv.

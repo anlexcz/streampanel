@@ -12,6 +12,15 @@
 </div>
 <div class="panel"><h2>Testovací komentáře</h2>
 <div class="buttons"><button id="add">Přidat komentář</button><button id="long" class="muted">Dlouhý komentář</button><button id="reset" class="muted">Obnovit ukázku</button><button id="burst" class="muted">Příval 12 zpráv</button><button id="age" class="muted">Zestárnout o 61 s</button></div>
+<div class="loop-control">
+  <h3>Automatický příval</h3>
+  <div class="buttons"><button id="loopStart">Spustit smyčku</button><button id="loopStop" class="muted" disabled>Zastavit</button></div>
+  <label for="loopSpeed">Nová zpráva každých <output id="speedLabel" for="loopSpeed">500 ms</output></label>
+  <input type="range" id="loopSpeed" min="100" max="2000" step="100" value="500">
+  <label for="loopBatch">Zpráv v jedné dávce</label>
+  <select id="loopBatch"><option value="1">1 zpráva</option><option value="3" selected>3 zprávy</option><option value="5">5 zpráv</option><option value="10">10 zpráv</option></select>
+  <p class="hint" id="loopStatus" role="status">Smyčka je zastavená.</p>
+</div>
 <label for="name">Autor</label><input id="name" value="Divák Metrobusu" maxlength="80">
 <label for="message">Text komentáře</label><textarea id="message" rows="3">Co si myslíte o novém grafikonu?</textarea>
 <button id="select">Zvýraznit tento komentář</button>
