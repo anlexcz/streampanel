@@ -1,21 +1,26 @@
 # Metrobus Stream Panel Lite
 
-Lokální režie YouTube chatu a **jediný přepínaný OBS overlay**.
+Lokální režie YouTube chatu. **Jediný OBS zdroj se čtyřmi nezávislými vrstvami.**
 
-## Spuštění
+## Stažení a spuštění
 
 1. Nainstalujte [Node.js LTS](https://nodejs.org/).
-2. Stáhněte ZIP z GitHub Actions (Windows package), rozbalte a spusťte **Spustit-Stream-Panel.bat**.
-3. Otevřete http://localhost:4173 a vložte URL veřejného YouTube livestreamu.
-4. V OBS přidejte **jediný** Browser Source: `http://localhost:4173/overlay.html` (například 900 × 600 px). Pozadí je průhledné.
-5. V režii klikněte u zprávy na **Zvýraznit**, tlačítkem **Skrýt** se vrátíte k automatickému chatu.
+2. V [GitHub Actions](https://github.com/anlexcz/streampanel/actions) otevřete poslední úspěšný běh **Windows package** a v sekci Artifacts stáhněte `MetrobusStreamPanel-win-x64`.
+3. Rozbalte ZIP. Ve složce `MetrobusStreamPanel` spusťte `Spustit-Stream-Panel.bat`, konzolové okno nechte otevřené.
+4. Webová režie je na `http://localhost:4173`.
+5. Otestujte tlačítkem **Testovací zpráva**, kliknutím na **Zvýraznit** a volbou **Zobrazit hned** u informační zprávy.
+6. Do OBS vložte **jeden zdroj Prohlížeč** s adresou `http://localhost:4173/overlay.html`, šířkou 1920 a výškou 1080. Zdroj roztáhněte přes celou scénu.
+7. Vložte URL veřejného právě běžícího YouTube livestreamu s dostupným chatem a stiskněte **Připojit**.
 
-## Priorita jednoho výstupu
+## Vrstvy společného OBS zdroje
 
-1. Ručně zvýrazněný komentář (zůstává, dokud se neskryje).
-2. Naplánovaná nebo ručně spuštěná informační zpráva.
-3. Posledních pět komentářů chatu.
+- Chat: vpravo dole, posledních pět běžných komentářů.
+- Zvýrazněný komentář: vlevo dole; nezakrývá automatický chat jako stav aplikace.
+- Informační zprávy: nahoře vlevo, lze zobrazit současně s oběma druhy komentářů.
+- Významné události: prostor nahoře vpravo připravený pro budoucí funkce (zatím neaktivní).
 
-Zprávy se v jedné vrstvě nepřekrývají. Informační banner může během dlouhého ručního zvýraznění uplynout bez zobrazení; odložená fronta bannerů zatím není implementována. Původní samostatné overlay URL pro kompatibilitu zůstávají, ale pro běžný provoz se nepoužívají.
+Původní samostatné adresy `/chat.html`, `/highlight.html` a `/ticker.html` zůstávají pro kompatibilitu, ale normálně se nepoužívají.
 
-**Důležité:** Knihovna youtube-chat 2.2.0 je neoficiální a starší. Připojení k aktuálnímu YouTube není ověřeno živým testem. Prvním krokem před vysíláním je otestovat funkčnost. Panel poslouchá jen na localhostu, nikoli na síti. CSV export obsahuje posledních 200 zpráv, úplnější průběžný záznam je v data/chat.jsonl. Aplikace nemá přihlášení. Vyžaduje instalaci Node.js; samostatné EXE zatím není.
+## Známá omezení
+
+YouTube sběrač používá starší neoficiální knihovnu `youtube-chat@2.2.0`. Živý sběr je nutné otestovat na skutečně běžícím streamu; nemusí fungovat při změnách YouTube. Na počítači musí být Node.js a panel běží jen na localhostu, bez přihlášení. CSV export obsahuje posledních 200 zpráv relace, průběžný log je `data/chat.jsonl`.
