@@ -207,7 +207,7 @@ if(mode==='unified'){
   const ticker=makeLayer(document.querySelector('#ticker-layer'),'ticker');
   const event=makeLayer(document.querySelector('#event-layer'),'event');
   render=s=>{
-    chat(s.messages||[]);
+    chat(s.conf?.chatVisible===false?[]:(s.messages||[]));
     featured(s.featured?[s.featured]:[]);
     const banner=s.tickerVisible||s.ticker;
     ticker(banner?[{id:String(banner.until),author:'METROBUS',text:banner.text}]:[]);
@@ -218,7 +218,7 @@ if(mode==='unified'){
   const layer=kind==='chat'?makeChatLayer(document.querySelector('#stage')):makeLayer(document.querySelector('#stage'),kind);
   render=s=>{
     const banner=s.tickerVisible||s.ticker;
-    layer(kind==='highlight'?(s.featured?[s.featured]:[]):kind==='ticker'?(banner?[{id:String(banner.until),text:banner.text}]:[]):(s.messages||[]));
+    layer(kind==='highlight'?(s.featured?[s.featured]:[]):kind==='ticker'?(banner?[{id:String(banner.until),text:banner.text}]:[]):(s.conf?.chatVisible===false?[]:(s.messages||[])));
   };
 }
 function update(s){

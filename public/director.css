@@ -38,3 +38,6 @@
  .chat-column .chat-panel{height:auto;min-height:480px}
  .chat-column .chat-feed{max-height:65vh;min-height:320px}
 }
+
+/* Local, connected director mode */
+.output-url #obsUrl{min-width:0;overflow-wrap:anywhere}.event-notice{line-height:1.5}
