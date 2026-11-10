@@ -108,3 +108,15 @@ body.overlay .chat-ghost{z-index:2}
 body.overlay #featured-layer,body.overlay #ticker-layer{transition:none;transform:none}
 body.overlay .featured-card,body.overlay .promo-banner{animation:none}
 body.overlay #chat-layer .stack-card.chat-ghost{animation:none}
+
+/* Metrobus Super Chat and Membership – unobtrusive event layer. */
+body.overlay #event-layer{top:3%;left:50%;transform:translateX(-50%);width:27%;max-width:520px}
+body.overlay .event-card{width:100%;border:0;border-radius:5px;padding:0;margin:0;background:var(--mb-card);color:var(--mb-text);box-shadow:var(--mb-shadow);overflow:hidden;backdrop-filter:blur(6px)}
+body.overlay .event-card__heading{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:38px;padding:9px 13px;background:rgba(180,126,28,.16);border-bottom:2px solid #dca83c}
+body.overlay .event-card--membership .event-card__heading{background:rgba(56,146,133,.15);border-bottom-color:#45b6a6}
+body.overlay .event-card__label{font:800 14px/1.2 Arial,sans-serif;letter-spacing:.045em;color:var(--mb-heading)}
+body.overlay .event-card__amount{font:800 19px/1.1 Arial,sans-serif;color:var(--mb-heading);white-space:nowrap}
+body.overlay .event-card__author{display:flex;gap:9px;align-items:center;padding:12px 14px 5px;font:800 17px/1.2 Arial,sans-serif;overflow-wrap:anywhere;color:var(--mb-heading)}
+body.overlay .event-card__avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--mb-avatar-bg);color:var(--mb-avatar-text);object-fit:cover;font-size:13px;flex:none}
+body.overlay .event-card__text{font:500 17px/1.33 Arial,sans-serif;color:var(--mb-text);padding:3px 14px 14px;overflow-wrap:anywhere}
+body.overlay #event-layer .event-card{animation:none}

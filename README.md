@@ -60,3 +60,9 @@ Příjem zprávy nyní pouze vloží komentář do **čekací fronty**. Samotný
 ## Zvýrazněný komentář a animace (nové)
 
 Zvýrazněná karta nyní obsahuje pouze avatar, jméno a text, bez pruhu „Vybraný komentář“. Po výběru ji server automaticky skryje po **90 sekundách**. Ruční skrytí je okamžité z pohledu stavu; vizuální fade-out s posunem nahoru trvá 260 ms. Výběr jiného komentáře resetuje 90s limit. Stejné schéma posunu a fade-in/fade-out platí pro informační banner a běžné chatové zprávy; staré karty se při posunu ostatních nepřekreslují. V Design Labu lze časový limit otestovat bez streamu.
+
+## Události v Design Labu
+
+Design Lab umí simulovat **Super Chat** a **nové členství** s autorem, částkou (jen Super Chat), textem, podporou tmavého/světlého motivu a samostatnou horní vrstvou. Událost se schová po **12 sekundách** nebo ručně. **Jde zatím jen o náhled: skutečný YouTube konektor nepředává výši příspěvku a události neposílá do vrstvy.** Reálné propojení je další vývojový krok.
+
+Čekací fronta běžného chatu je zvětšená na **80 zpráv**. Tempo: do 5 čekajících jedna za 1,8 s; od 6 jedna za 1,2 s; od 16 jedna za 0,8 s. Stáří zpráv zůstává 60 s a fronta přes limit zahazuje nejstarší čekající zprávy.

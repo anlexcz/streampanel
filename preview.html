@@ -8,7 +8,8 @@
 <div class="panel"><h2>Vrstvy</h2>
 <label><input id="chat" type="checkbox" checked> Průběžný chat</label>
 <label><input id="featured" type="checkbox" checked> Zvýrazněný komentář</label>
-<label><input id="ticker" type="checkbox" checked> Informační banner</label>
+<label><input id="ticker" type="checkbox"> Informační banner</label>
+<label><input id="events" type="checkbox" checked> Super Chat / členství</label>
 </div>
 <div class="panel"><h2>Testovací komentáře</h2>
 <div class="buttons"><button id="add">Přidat komentář</button><button id="long" class="muted">Dlouhý komentář</button><button id="reset" class="muted">Obnovit ukázku</button><button id="burst" class="muted">Příval 12 zpráv</button><button id="age" class="muted">Zestárnout o 61 s</button></div>
@@ -25,6 +26,15 @@
 <label for="message">Text komentáře</label><textarea id="message" rows="3">Co si myslíte o novém grafikonu?</textarea>
 <button id="select">Zvýraznit tento komentář</button>
 </div>
+<div class="panel"><h2>Super Chat a členství</h2>
+<label for="eventType">Typ události</label>
+<select id="eventType"><option value="superchat">Super Chat</option><option value="membership">Nové členství</option></select>
+<label for="eventAuthor">Autor</label><input id="eventAuthor" value="Martin K." maxlength="80">
+<label for="eventAmount">Částka Super Chatu</label><input id="eventAmount" value="200 Kč" maxlength="30">
+<label for="eventText">Vzkaz</label><textarea id="eventText" rows="2">Díky za skvělý stream!</textarea>
+<div class="buttons"><button id="eventShow">Zobrazit událost</button><button id="eventHide" class="muted">Skrýt</button></div>
+<p class="hint">Událost zůstane v obraze 12 sekund. Další událostí ji lze nahradit okamžitě.</p>
+</div>
 <div class="panel"><h2>Vzhled overlaye</h2>
 <label for="overlayTheme">Grafický motiv</label>
 <select id="overlayTheme"><option value="dark">Tmavý overlay</option><option value="light">Světlý overlay</option></select>
@@ -36,5 +46,5 @@
 </div>
 <section class="preview-area"><div class="preview-top"><h2>Výstup OBS</h2><span>1920 × 1080 · 16:9</span></div>
 <div id="viewport" class="viewport checker"><iframe id="frame" title="Testovací OBS overlay" src="./public/preview-frame.html" scrolling="no"></iframe></div>
-<p class="caption">Průběžný chat vpravo dole, vybraný komentář vlevo dole, informační zpráva nahoře vlevo. Vše současně v jednom zdroji.</p></section>
+<p class="caption">Průběžný chat vpravo dole, vybraný komentář vlevo dole a události nahoře uprostřed. Vše v jediném OBS zdroji.</p></section>
 </main><script src="./public/preview-controls.js"></script></body></html>

@@ -9,6 +9,16 @@ function card(m,kind){
   if(kind==='chat')return '<article class="stack-card">'+avatar(m,'stack-avatar')+'<div class="stack-content"><div class="stack-author">'+escapeHtml(m.author)+'</div><div class="stack-text">'+escapeHtml(m.text)+'</div></div></article>';
   if(kind==='highlight')return '<article class="featured-card"><div class="featured-body"><div class="featured-side">'+avatar(m,'featured-avatar')+'</div><div class="featured-content"><div class="featured-author">'+escapeHtml(m.author)+'</div><div class="featured-text">'+escapeHtml(m.text)+'</div></div></div></article>';
   if(kind==='ticker')return '<article class="promo-banner"><div class="promo-banner__text">'+escapeHtml(m.text)+'</div></article>';
+  if(kind==='event'){
+    const amount=escapeHtml(m.amount||'');
+    const label=m.eventType==='membership'?'NOVÉ ČLENSTVÍ':'SUPER CHAT';
+    return '<article class="event-card event-card--'+(m.eventType==='membership'?'membership':'superchat')+'">'+
+      '<div class="event-card__heading"><span class="event-card__label">'+label+'</span>'+
+      (amount?'<span class="event-card__amount">'+amount+'</span>':'')+'</div>'+
+      '<div class="event-card__author">'+avatar(m,'event-card__avatar')+'<strong>'+escapeHtml(m.author)+'</strong></div>'+
+      (m.text?'<div class="event-card__text">'+escapeHtml(m.text)+'</div>':'')+
+      '</article>';
+  }
   return '';
 }
 function makeLayer(el,kind){
@@ -51,7 +61,7 @@ function makeLayer(el,kind){
 const CHAT_MAX_ITEMS=5;
 const CHAT_MAX_AGE_MS=60000;
 const CHAT_DISPLAY_INTERVAL_MS=1800;
-const CHAT_QUEUE_LIMIT=40;
+const CHAT_QUEUE_LIMIT=80;
 
 /* Message arrival only appends to the queue. The renderer runs at its own pace. */
 function makeChatLayer(el){
@@ -167,7 +177,15 @@ function makeChatLayer(el){
     }
     if(visible.length!==before||pending.length||before)paint();
   }
-  setInterval(tick,CHAT_DISPLAY_INTERVAL_MS);
+  function nextInterval(){
+    if(pending.length>=16)return 800;
+    if(pending.length>=6)return 1200;
+    return CHAT_DISPLAY_INTERVAL_MS;
+  }
+  function scheduleTick(){
+    setTimeout(()=>{tick();scheduleTick()},nextInterval());
+  }
+  scheduleTick();
   // Expire an idle chat without waiting for the next incoming message.
   setInterval(()=>{
     if(!visible.length&&!pending.length)return;
@@ -182,11 +200,13 @@ if(mode==='unified'){
   const chat=makeChatLayer(document.querySelector('#chat-layer'));
   const featured=makeLayer(document.querySelector('#featured-layer'),'highlight');
   const ticker=makeLayer(document.querySelector('#ticker-layer'),'ticker');
+  const event=makeLayer(document.querySelector('#event-layer'),'event');
   render=s=>{
     chat(s.messages||[]);
     featured(s.featured?[s.featured]:[]);
     const banner=s.tickerVisible||s.ticker;
     ticker(banner?[{id:String(banner.until),author:'METROBUS',text:banner.text}]:[]);
+    event(s.event?[s.event]:[]);
   };
 }else{
   const kind=mode==='highlight'?'highlight':mode==='ticker'?'ticker':'chat';
