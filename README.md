@@ -44,3 +44,7 @@ V lokální režii vyberte **Vzhled overlaye → Tmavý/Světlý** a nastavení 
 ## Aktuální pravidla chatu
 
 Automatický chat zobrazuje nejvýše **5 posledních běžných zpráv**, v pořadí od nejstarší nahoře po nejnovější dole. Příchod nové zprávy odstraní nejstarší viditelnou zprávu. Zprávy samy po čase nemizí a všechny viditelné karty se při každém novém stavu znovu vykreslí (tedy znovu animují). Server drží v RAM nejvýše **200** zpráv aktuálního streamu; jednotlivý text ořízne na **1500 znaků**. Vysoké nebo dlouhé zprávy mohou přesáhnout rezervovanou výšku obrazovky. Nastavení počtu zpráv, stárnutí, plynulé animace posunu a omezení výšky jsou otevřené úkoly pro další iteraci.
+
+## Posouvání chatu (nové)
+
+Každá viditelná zpráva má vlastní DOM prvek: nová se přidá dole, starší se plynule posunou nahoru bez opakování své vstupní animace. Na obrazovce zůstává nejvýše **5 zpráv**, každá maximálně **60 sekund od přijetí**. Chat zabírá nejvýše **42 % výšky obrazu**; dlouhé texty jsou omezené na čtyři řádky a pokud se pět karet nevejde, zahodí se nejstarší. Zvýrazněný komentář a informační banner nejsou časovačem průběžného chatu ovlivněny. Design Lab umožňuje simulovat příval zpráv a jejich zestárnutí.

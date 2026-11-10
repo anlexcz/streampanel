@@ -97,3 +97,9 @@ body.overlay .promo-banner__text {color:var(--mb-text)}
 
 /* Theme selector in local control panel */
 .theme-select{background:#101822;border:1px solid #3a4c60;color:#fff;border-radius:5px;padding:10px;width:100%;font:inherit}
+
+/* Keyed chat animations; cards keep their DOM identity across updates. */
+body.overlay #chat-layer{max-height:42vh;overflow:hidden;justify-content:flex-end}
+body.overlay #chat-layer .stack-card{animation:none;flex-shrink:0}
+body.overlay #chat-layer .stack-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;line-clamp:4;overflow:hidden}
+body.overlay .chat-ghost{z-index:2}
