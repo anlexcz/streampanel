@@ -10,52 +10,57 @@ function card(m,kind){
   if(kind==='highlight')return '<article class="featured-card"><div class="featured-body"><div class="featured-side">'+avatar(m,'featured-avatar')+'</div><div class="featured-content"><div class="featured-author">'+escapeHtml(m.author)+'</div><div class="featured-text">'+escapeHtml(m.text)+'</div></div></div></article>';
   if(kind==='ticker')return '<article class="promo-banner"><div class="promo-banner__text">'+escapeHtml(m.text)+'</div></article>';
   if(kind==='event'){
-    const amount=escapeHtml(m.amount||'');
-    const label=m.eventType==='membership'?'NOVÉ ČLENSTVÍ':'SUPER CHAT';
-    return '<article class="event-card event-card--'+(m.eventType==='membership'?'membership':'superchat')+'">'+
-      '<div class="event-card__heading"><span class="event-card__label">'+label+'</span>'+
-      (amount?'<span class="event-card__amount">'+amount+'</span>':'')+'</div>'+
-      '<div class="event-card__author">'+avatar(m,'event-card__avatar')+'<strong>'+escapeHtml(m.author)+'</strong></div>'+
-      (m.text?'<div class="event-card__text">'+escapeHtml(m.text)+'</div>':'')+
+    const membership=m.eventType==='membership';
+    return '<article class="event-card event-card--'+(membership?'membership':'superchat')+'">'+
+      avatar(m,'event-card__avatar')+
+      '<div class="event-card__body"><div class="event-card__author">'+escapeHtml(m.author)+'</div>'+
+      (m.text?'<div class="event-card__text">'+escapeHtml(m.text)+'</div>':'')+'</div>'+
+      '<div class="event-card__value">'+(membership?'NOVÝ ČLEN':escapeHtml(m.amount||'SUPER CHAT'))+'</div>'+
       '</article>';
   }
   return '';
 }
 function makeLayer(el,kind){
-  let previous='',removal=null,epoch=0;
+  let signature='',epoch=0,activeAnimation=null,transitionTimer=null;
+  const directional=kind==='highlight'||kind==='event';
+  const duration=directional?350:300;
+  const direction=kind==='event'?-25:25;
+  const reduce=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function animateCard(type,done){
+    const node=el.firstElementChild;
+    if(!node||reduce()||!directional){done();return}
+    const from=type==='enter'?direction:0;
+    const to=type==='enter'?0:direction;
+    activeAnimation=node.animate(
+      [{opacity:type==='enter'?0:1,transform:'translateY('+from+'px)'},
+       {opacity:type==='enter'?1:0,transform:'translateY('+to+'px)'}],
+      {duration,easing:'cubic-bezier(.2,.8,.2,1)',fill:'forwards'}
+    );
+    activeAnimation.onfinish=()=>{activeAnimation=null;done()};
+  }
   return entries=>{
     if(!el)return;
-    const sig=entries.map(m=>m.id+':'+m.text+':'+m.author).join('|');
-    if(sig===previous)return;
-    previous=sig;
-    const current=++epoch;
-    if(removal)clearTimeout(removal);
-    const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const outgoing=el.classList.contains('visible')&&el.firstElementChild;
-    // On replacement: animate the old card out before bringing the next card in.
-    // On hide: keep the old content alive for the duration of its exit animation.
-    const draw=()=>{
-      if(current!==epoch)return;
+    const next=entries.map(m=>[m.id,m.author,m.text,m.amount,m.eventType].join(':')).join('|');
+    if(next===signature)return;
+    signature=next;
+    const token=++epoch;
+    if(transitionTimer!==null){clearTimeout(transitionTimer);transitionTimer=null}
+    if(activeAnimation){activeAnimation.cancel();activeAnimation=null}
+    const show=()=>{
+      if(token!==epoch)return;
       el.replaceChildren();
-      if(!entries.length)return;
+      if(!entries.length){el.classList.remove('visible');return}
       el.innerHTML=entries.map(m=>card(m,kind)).join('');
       el.classList.add('visible');
-      if(!reduced)el.animate(
-        [{opacity:0,transform:'translateY(18px)'},{opacity:1,transform:'translateY(0)'}],
-        {duration:300,easing:'cubic-bezier(.2,.8,.2,1)'}
-      );
+      animateCard('enter',()=>{});
     };
-    if(outgoing&&!reduced){
-      const anim=el.animate(
-        [{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-18px)'}],
-        {duration:260,easing:'cubic-bezier(.2,.8,.2,1)'}
-      );
-      anim.onfinish=()=>{if(current===epoch){el.classList.remove('visible');draw()}};
-      removal=setTimeout(()=>{if(current===epoch){anim.cancel();el.classList.remove('visible');draw()}},320);
-    }else{
-      el.classList.remove('visible');
-      draw();
-    }
+    if(el.firstElementChild&&el.classList.contains('visible')){
+      animateCard('exit',()=>{
+        if(token!==epoch)return;
+        el.classList.remove('visible');
+        transitionTimer=setTimeout(show,0);
+      });
+    }else show();
   };
 }
 const CHAT_MAX_ITEMS=5;

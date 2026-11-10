@@ -109,14 +109,44 @@ body.overlay #featured-layer,body.overlay #ticker-layer{transition:none;transfor
 body.overlay .featured-card,body.overlay .promo-banner{animation:none}
 body.overlay #chat-layer .stack-card.chat-ghost{animation:none}
 
-/* Metrobus Super Chat and Membership – unobtrusive event layer. */
-body.overlay #event-layer{top:3%;left:50%;transform:translateX(-50%);width:27%;max-width:520px}
-body.overlay .event-card{width:100%;border:0;border-radius:5px;padding:0;margin:0;background:var(--mb-card);color:var(--mb-text);box-shadow:var(--mb-shadow);overflow:hidden;backdrop-filter:blur(6px)}
-body.overlay .event-card__heading{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:38px;padding:9px 13px;background:rgba(180,126,28,.16);border-bottom:2px solid #dca83c}
-body.overlay .event-card--membership .event-card__heading{background:rgba(56,146,133,.15);border-bottom-color:#45b6a6}
-body.overlay .event-card__label{font:800 14px/1.2 Arial,sans-serif;letter-spacing:.045em;color:var(--mb-heading)}
-body.overlay .event-card__amount{font:800 19px/1.1 Arial,sans-serif;color:var(--mb-heading);white-space:nowrap}
-body.overlay .event-card__author{display:flex;gap:9px;align-items:center;padding:12px 14px 5px;font:800 17px/1.2 Arial,sans-serif;overflow-wrap:anywhere;color:var(--mb-heading)}
-body.overlay .event-card__avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--mb-avatar-bg);color:var(--mb-avatar-text);object-fit:cover;font-size:13px;flex:none}
-body.overlay .event-card__text{font:500 17px/1.33 Arial,sans-serif;color:var(--mb-text);padding:3px 14px 14px;overflow-wrap:anywhere}
-body.overlay #event-layer .event-card{animation:none}
+/* Super Chat / membership: one compact card, bottom accent, anchored at top center.
+   Animation targets the inner card only, never the centered layer container. */
+body.overlay #event-layer{
+  top:3%;left:50%;width:29%;max-width:560px;
+  transform:translateX(-50%);transition:none;
+}
+body.overlay .event-card{
+  display:flex;align-items:center;gap:12px;position:relative;
+  width:100%;min-height:68px;max-width:100%;padding:11px 14px 15px;
+  margin:0;background:var(--mb-card);color:var(--mb-text);
+  border:0;border-bottom:4px solid #dca83c;border-radius:5px;
+  box-shadow:var(--mb-shadow);overflow:hidden;backdrop-filter:blur(6px);
+  animation:none;
+}
+body.overlay .event-card--membership{border-bottom-color:#45b6a6}
+body.overlay .event-card__avatar{
+  width:38px;height:38px;flex:0 0 38px;
+  border-radius:50%;display:grid;place-items:center;
+  background:var(--mb-avatar-bg);color:var(--mb-avatar-text);
+  object-fit:cover;font-size:13px;font-weight:800;
+}
+body.overlay .event-card__body{flex:1;min-width:0}
+body.overlay .event-card__author{
+  font:800 17px/1.2 Arial,sans-serif;color:var(--mb-heading);
+  overflow-wrap:anywhere;
+}
+body.overlay .event-card__text{
+  margin-top:4px;font:500 16px/1.3 Arial,sans-serif;color:var(--mb-text);
+  overflow-wrap:anywhere;
+}
+body.overlay .event-card__value{
+  flex:0 0 auto;align-self:center;max-width:38%;
+  font:900 24px/1.15 Arial,sans-serif;color:#dca83c;
+  text-align:right;overflow-wrap:anywhere;
+}
+body.overlay .event-card--membership .event-card__value{
+  color:#45b6a6;font-size:14px;letter-spacing:.02em;
+}
+body.overlay[data-theme="light"] .event-card__value{color:#9c701c}
+body.overlay[data-theme="light"] .event-card--membership .event-card__value{color:#207c70}
+@media(prefers-reduced-motion:reduce){body.overlay #event-layer .event-card{animation:none}}

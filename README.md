@@ -66,3 +66,9 @@ Zvýrazněná karta nyní obsahuje pouze avatar, jméno a text, bez pruhu „Vyb
 Design Lab umí simulovat **Super Chat** a **nové členství** s autorem, částkou (jen Super Chat), textem, podporou tmavého/světlého motivu a samostatnou horní vrstvou. Událost se schová po **12 sekundách** nebo ručně. **Jde zatím jen o náhled: skutečný YouTube konektor nepředává výši příspěvku a události neposílá do vrstvy.** Reálné propojení je další vývojový krok.
 
 Čekací fronta běžného chatu je zvětšená na **80 zpráv**. Tempo: do 5 čekajících jedna za 1,8 s; od 6 jedna za 1,2 s; od 16 jedna za 0,8 s. Stáří zpráv zůstává 60 s a fronta přes limit zahazuje nejstarší čekající zprávy.
+
+## Návrh událostí v Design Labu (30 s)
+
+Super Chat a členství jsou v jednom kompaktním grafickém boxu: avatar, jméno, zpráva, zvýrazněná částka nebo označení „NOVÝ ČLEN“. Zlatý/tyrkysový akcent je **na spodní hraně**. Událost nahoře uprostřed přijíždí **shora o 25 px (350 ms)** a odjíždí **nahoru o 25 px (350 ms)**. Vybraný komentář vlevo dole přijíždí **zdola o 25 px (350 ms)** a stejným směrem zase odjíždí. Horizontální vystředění události zůstává trvale na nadřazené vrstvě; animuje se pouze karta.
+
+Design Lab má simulovanou frontu událostí: každá má **30 s od začátku zobrazení**, po výstupní animaci následuje **500ms pauza**, pak další. Skrytí události přejde na další po téže pauze. Jde o designový simulátor, ne zapojenou YouTube událostní frontu na serveru.
