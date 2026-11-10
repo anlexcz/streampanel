@@ -1,5 +1,14 @@
 # Metrobus Stream Panel Lite
 
+## Online náhled designu (GitHub Pages)
+
+Pokud jsou GitHub Pages nastavené na větev `main` a kořenovou složku `/`, otevřete:
+
+**https://anlexcz.github.io/streampanel/preview.html**
+
+Náhled funguje bez instalace a bez přístupu k YouTube. Simuluje průběžný chat, zvýrazněnou zprávu a informační banner současně ve scéně 1920 × 1080. Používá stejný `public/style.css` a vykreslovací skript `public/overlay.js` jako OBS. Úpravy těchto souborů v GitHubu se po nasazení Pages projeví v náhledu. Reálné vysílání zůstává lokální: GitHub Pages nespouštějí Node.js ani nesbírají živý chat.
+
+
 Lokální režie YouTube chatu a **jeden společný transparentní OBS overlay s nezávislými vrstvami**.
 
 ## Instalace a spuštění na Windows
