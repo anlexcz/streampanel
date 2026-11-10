@@ -113,4 +113,30 @@ setInterval(()=>{
  paintFeatured();paintEvents();
 },500);
 resize();
+
+let lanOverlayAddress='';
+async function findLanOverlay(){
+ try{
+  const response=await fetch('/network-info');
+  if(!response.ok)throw Error('Síťové adresy nelze načíst');
+  const data=await response.json();
+  const urls=data.urls||[];
+  lanOverlayAddress=urls.find(url=>/^http:\/\/192\.168\./.test(url))||
+    urls.find(url=>/^http:\/\/10\./.test(url))||
+    urls.find(url=>/^http:\/\/172\.(1[6-9]|2\d|3[01])\./.test(url))||urls[0]||'';
+  $('lanObsUrl').textContent=lanOverlayAddress||'Není nalezena LAN IPv4 adresa';
+  $('copyLanObs').disabled=!lanOverlayAddress;
+  $('copyLanObs').title=urls.length>1?'Dostupné adresy: '+urls.join(' | '):'';
+ }catch(error){$('lanObsUrl').textContent='LAN adresa nedostupná';console.error(error)}
+}
+$('copyLanObs').addEventListener('click',async()=>{
+ if(!lanOverlayAddress)return;
+ try{
+  await navigator.clipboard.writeText(lanOverlayAddress);
+  $('copyLanObs').textContent='Zkopírováno';
+  setTimeout(()=>$('copyLanObs').textContent='Kopírovat LAN',1600);
+ }catch{alert('Zkopíruj adresu ručně: '+lanOverlayAddress)}
+});
+findLanOverlay();
+
 })();

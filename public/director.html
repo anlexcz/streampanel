@@ -16,13 +16,14 @@
  <section class="panel obs-setup-panel">
  <div class="panel-heading"><h2>OBS zdroj</h2><span class="small">Jeden společný overlay</span></div>
  <div class="output-url"><span id="obsUrl">http://localhost:4173/overlay.html</span> <button id="copyObs">Kopírovat</button></div>
+<div class="output-url" style="margin-top:9px"><span id="lanObsUrl">Zjišťuji adresu pro druhý počítač…</span> <button id="copyLanObs" disabled>Kopírovat LAN</button></div>
  <details id="obsPreviewDetails" class="obs-preview-details">
  <summary><span>Náhled OBS</span><span class="preview-hint">1920 × 1080 · kliknutím rozbalit</span></summary>
  <div class="preview-content">
  <div id="viewport" class="viewport dark"><iframe id="frame" src="/overlay.html" title="Náhled OBS" scrolling="no"></iframe></div>
  <div class="preview-options"><label>Motiv <select id="theme"><option value="dark">Tmavý</option><option value="light">Světlý</option></select></label><label>Podklad <select id="background"><option value="dark">Tmavé video</option><option value="light">Světlé video</option><option value="checker">Průhlednost</option></select></label></div>
  </div></details>
- <p class="small obs-note">OBS Browser Source · rozlišení 1920 × 1080 · průhledné pozadí.</p>
+ <p class="small obs-note">Pro OBS na druhém počítači použij LAN adresu. Rozlišení 1920 × 1080, průhledné pozadí. Ve Windows může být nutné povolit příchozí TCP 4174 pro privátní síť.</p>
  </section>
  <section class="panel events-panel"><div class="panel-heading"><div class="heading-inline"><h2>Super Chat a členství</h2><span class="count" id="eventCount">0</span></div><span class="small">30 s v obraze · další čekají ve frontě</span></div>
  <p class="small event-notice">Podporované Super Chaty se zobrazují automaticky. Rozpoznání nového členství závisí na datech dostupných z YouTube.</p>

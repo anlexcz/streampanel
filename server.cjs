@@ -2,9 +2,11 @@
 const http=require('node:http');
 const fs=require('node:fs');
 const path=require('node:path');
+const os=require('node:os');
 const {randomUUID}=require('node:crypto');
 const {LiveChat}=require('youtube-chat');
 const PORT=4173;
+const LAN_PORT=4174;
 const ROOT=path.join(__dirname,'public');
 const DATA=path.join(__dirname,'data');
 fs.mkdirSync(DATA,{recursive:true});
@@ -130,6 +132,10 @@ function reply(res,statusCode,data,mime='application/json; charset=utf-8'){
 }
 http.createServer(async(req,res)=>{
   const u=new URL(req.url,'http://localhost');
+  if(req.method==='GET'&&u.pathname==='/network-info'){
+    const addresses=Object.values(os.networkInterfaces()).flat().filter(i=>i&&i.family==='IPv4'&&!i.internal).map(i=>i.address);
+    return reply(res,200,{port:LAN_PORT,addresses,urls:addresses.map(ip=>'http://'+ip+':'+LAN_PORT+'/overlay.html')});
+  }
   if(req.method==='GET'&&u.pathname==='/events'){
     res.writeHead(200,{'Content-Type':'text/event-stream','Cache-Control':'no-cache','Connection':'keep-alive'});
     res.write('data: '+JSON.stringify(state())+'\n\n');
@@ -187,3 +193,30 @@ http.createServer(async(req,res)=>{
     fs.createReadStream(file).on('error',()=>res.end()).pipe(res);
   }catch{return reply(res,404,{error:'Nenalezeno'})}
 }).listen(PORT,'127.0.0.1',()=>console.log('Metrobus Stream Panel: http://localhost:'+PORT));
+
+/* Separate read-only LAN server; editing endpoints stay on loopback. */
+const LAN_FILES=new Map([
+ ['/overlay.html','text/html; charset=utf-8'],
+ ['/overlay.js','text/javascript; charset=utf-8'],
+ ['/style.css','text/css; charset=utf-8']
+]);
+http.createServer((req,res)=>{
+ const u=new URL(req.url,'http://localhost');
+ if(req.method!=='GET')return reply(res,405,{error:'Síťový overlay je jen ke čtení'});
+ if(u.pathname==='/events'){
+   res.writeHead(200,{'Content-Type':'text/event-stream','Cache-Control':'no-cache','Connection':'keep-alive','X-Content-Type-Options':'nosniff'});
+   res.write('data: '+JSON.stringify(state())+'\n\n');
+   clients.add(res);req.on('close',()=>clients.delete(res));return;
+ }
+ const mime=LAN_FILES.get(u.pathname);
+ if(!mime)return reply(res,404,{error:'Dostupný je jen OBS overlay'});
+ res.writeHead(200,{'Content-Type':mime,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+ fs.createReadStream(path.join(ROOT,u.pathname)).on('error',()=>res.end()).pipe(res);
+}).listen(LAN_PORT,'0.0.0.0',()=>{
+ console.log('LAN overlay na TCP '+LAN_PORT+':');
+ for(const nets of Object.values(os.networkInterfaces())){
+   for(const ip of nets||[]){
+     if(ip.family==='IPv4'&&!ip.internal)console.log('http://'+ip.address+':'+LAN_PORT+'/overlay.html');
+   }
+ }
+}).on('error',error=>console.error('LAN overlay:',error.message));
