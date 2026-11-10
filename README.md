@@ -56,3 +56,7 @@ Sekce **Automatický příval** vytváří simulované komentáře ve smyčce. L
 ## Tempo zobrazování chatu
 
 Příjem zprávy nyní pouze vloží komentář do **čekací fronty**. Samotný overlay se **neaktualizuje při každém příjmu**: jednou za **1,8 sekundy** odebere z fronty nejvýše jednu zprávu a přidá ji dole. Dřívější karty zůstávají, dokud nejsou vytlačeny, nezestárnou (60 sekund) nebo nevejdou do maximální výšky. Fronta uchová nejvýše **40 čekajících zpráv**; při přetížení zahazuje nejstarší dosud nezobrazené. Zprávy, které během čekání překročí 60 sekund stáří, se také přeskočí. Při prvním otevření overlaye se z historie přednačte maximálně posledních pět zpráv, aby se neopakovala dlouhá historie. Zobrazení vybraného komentáře a informačního banneru tím není omezeno.
+
+## Zvýrazněný komentář a animace (nové)
+
+Zvýrazněná karta nyní obsahuje pouze avatar, jméno a text, bez pruhu „Vybraný komentář“. Po výběru ji server automaticky skryje po **90 sekundách**. Ruční skrytí je okamžité z pohledu stavu; vizuální fade-out s posunem nahoru trvá 260 ms. Výběr jiného komentáře resetuje 90s limit. Stejné schéma posunu a fade-in/fade-out platí pro informační banner a běžné chatové zprávy; staré karty se při posunu ostatních nepřekreslují. V Design Labu lze časový limit otestovat bez streamu.

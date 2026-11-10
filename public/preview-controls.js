@@ -13,6 +13,8 @@
  let ready=false;
  let loopTimer=null;
  let generatedCount=0;
+ const FEATURED_DURATION_MS=90000;
+ let featuredSelection={id:'featured-default',author:'Divák Metrobusu',text:'Co si myslíte o novém grafikonu?',expiresAt:Date.now()+FEATURED_DURATION_MS};
  const sampleAuthors=['Petr Novák','Andrea K.','Martin','Lucie','Šotouš z Prahy','Tomáš','Klára','Honza','Metrobus divák'];
  const sampleTexts=[
    'Zdravím celé studio!',
@@ -64,19 +66,26 @@
    return {
      theme:$('overlayTheme').value,
      messages:$('chat').checked?messages:[],
-     featured:$('featured').checked?{id:'featured:'+sequence,author:$('name').value||'Divák',text:$('message').value||'Ukázkový komentář'}:null,
+     featured:$('featured').checked&&featuredSelection&&Date.now()<featuredSelection.expiresAt?featuredSelection:null,
      ticker:$('ticker').checked?{until:12345,text:'Sledujte Metrobus také na Instagramu @metrobuscz'}:null
    };
  }
  function update(){if(ready)frame.contentWindow.postMessage({type:'metrobus-preview',state:state()},location.origin);}
  frame.addEventListener('load',()=>{ready=true;update()});
  window.addEventListener('message',event=>{if(event.origin===location.origin && event.source===frame.contentWindow && event.data?.type==='metrobus-preview-ready'){ready=true;update()}});
- for(const id of ['chat','featured','ticker','overlayTheme'])$(id).addEventListener('change',update);
- for(const id of ['name','message'])$(id).addEventListener('input',()=>{sequence++;update()});
+ for(const id of ['chat','ticker','overlayTheme'])$(id).addEventListener('change',update);
+ $('featured').addEventListener('change',()=>{
+   if($('featured').checked){
+     sequence++;
+     featuredSelection={id:'featured:'+sequence,author:$('name').value||'Divák',text:$('message').value||'Ukázkový komentář',expiresAt:Date.now()+FEATURED_DURATION_MS};
+   }else featuredSelection=null;
+   update();
+ });
+ for(const id of ['name','message'])$(id).addEventListener('input',()=>{});
  $('add').addEventListener('click',()=>{sequence++;messages=[...messages,{id:String(sequence),author:$('name').value||'Divák',text:$('message').value||'Ukázkový komentář',type:'message',time:time()}].slice(-5);update()});
  $('long').addEventListener('click',()=>{$('message').value='Jak se bude měnit provoz v Praze s novým grafikonem a počítá se také s dalšími úpravami tramvajových linek? Zajímalo by mě, jestli to bude mít nějaký dopad na přestupy.';sequence++;update()});
- $('select').addEventListener('click',()=>{$('featured').checked=true;sequence++;update()});
- $('reset').addEventListener('click',()=>{messages=defaults().map(m=>({...m,time:time()}));sequence++;$('featured').checked=true;$('ticker').checked=true;$('chat').checked=true;$('name').value='Divák Metrobusu';$('message').value='Co si myslíte o novém grafikonu?';update()});
+ $('select').addEventListener('click',()=>{$('featured').checked=true;sequence++;featuredSelection={id:'featured:'+sequence,author:$('name').value||'Divák',text:$('message').value||'Ukázkový komentář',expiresAt:Date.now()+FEATURED_DURATION_MS};update()});
+ $('reset').addEventListener('click',()=>{messages=defaults().map(m=>({...m,time:time()}));sequence++;$('featured').checked=true;$('ticker').checked=true;$('chat').checked=true;$('name').value='Divák Metrobusu';$('message').value='Co si myslíte o novém grafikonu?';featuredSelection={id:'featured:'+sequence,author:'Divák Metrobusu',text:'Co si myslíte o novém grafikonu?',expiresAt:Date.now()+FEATURED_DURATION_MS};update()});
  $('burst').addEventListener('click',()=>{
    for(let i=0;i<12;i++){sequence++;messages.push({id:String(sequence),author:'Divák '+sequence,text:i%4===0?'Delší komentář pro kontrolu zalamování: co si myslíte o změnách jízdních řádů a přestupech v Praze?':'Testovací komentář číslo '+(i+1),type:'message',time:time()})}
    messages=messages.slice(-200);update();
@@ -90,6 +99,13 @@
    if(loopTimer!==null){clearInterval(loopTimer);loopTimer=setInterval(insertGenerated,ms)}
  });
  $('reset').addEventListener('click',()=>{stopLoop();generatedCount=0;$('loopStatus').textContent='Smyčka je zastavená.'});
+ setInterval(()=>{
+   if(featuredSelection&&Date.now()>=featuredSelection.expiresAt){
+     featuredSelection=null;
+     $('featured').checked=false;
+     update();
+   }
+ },500);
  addEventListener('pagehide',stopLoop);
  $('background').addEventListener('change',()=>{viewport.className='viewport '+$('background').value});
  new ResizeObserver(scale).observe(viewport);

@@ -7,7 +7,7 @@ function avatar(m,cls){
 }
 function card(m,kind){
   if(kind==='chat')return '<article class="stack-card">'+avatar(m,'stack-avatar')+'<div class="stack-content"><div class="stack-author">'+escapeHtml(m.author)+'</div><div class="stack-text">'+escapeHtml(m.text)+'</div></div></article>';
-  if(kind==='highlight')return '<article class="featured-card"><div class="featured-band">VYBRANÝ KOMENTÁŘ</div><div class="featured-body"><div class="featured-side">'+avatar(m,'featured-avatar')+'</div><div class="featured-content"><div class="featured-author">'+escapeHtml(m.author)+'</div><div class="featured-text">'+escapeHtml(m.text)+'</div></div></div></article>';
+  if(kind==='highlight')return '<article class="featured-card"><div class="featured-body"><div class="featured-side">'+avatar(m,'featured-avatar')+'</div><div class="featured-content"><div class="featured-author">'+escapeHtml(m.author)+'</div><div class="featured-text">'+escapeHtml(m.text)+'</div></div></div></article>';
   if(kind==='ticker')return '<article class="promo-banner"><div class="promo-banner__text">'+escapeHtml(m.text)+'</div></article>';
   return '';
 }
@@ -19,18 +19,29 @@ function makeLayer(el,kind){
     if(sig===previous)return;
     previous=sig;
     const current=++epoch;
-    clearTimeout(removal);
-    if(!entries.length){
+    if(removal)clearTimeout(removal);
+    const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const outgoing=el.classList.contains('visible')&&el.firstElementChild;
+    // On replacement: animate the old card out before bringing the next card in.
+    // On hide: keep the old content alive for the duration of its exit animation.
+    const draw=()=>{
+      if(current!==epoch)return;
+      el.replaceChildren();
+      if(!entries.length)return;
+      el.innerHTML=entries.map(m=>card(m,kind)).join('');
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        if(current===epoch)el.classList.add('visible');
+      }));
+    };
+    if(outgoing&&!reduced){
       el.classList.remove('visible');
-      removal=setTimeout(()=>{if(current===epoch)el.replaceChildren()},200);
-      return;
+      removal=setTimeout(draw,260);
+    }else{
+      el.classList.remove('visible');
+      draw();
     }
-    el.innerHTML=entries.map(m=>card(m,kind)).join('');
-    el.classList.remove('visible');
-    requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('visible')));
   };
 }
-
 const CHAT_MAX_ITEMS=5;
 const CHAT_MAX_AGE_MS=60000;
 const CHAT_DISPLAY_INTERVAL_MS=1800;
@@ -86,9 +97,9 @@ function makeChatLayer(el){
         ghost.classList.add('chat-ghost');
         ghost.style.cssText='position:absolute;top:'+(r.top-host.top)+'px;right:'+(host.right-r.right)+'px;width:'+r.width+'px;max-width:none;margin:0;pointer-events:none;';
         el.appendChild(ghost);
-        const animation=ghost.animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-10px)'}],{duration:220,easing:'ease-out'});
+        const animation=ghost.animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-18px)'}],{duration:260,easing:'ease-out'});
         animation.onfinish=()=>ghost.remove();
-        setTimeout(()=>ghost.remove(),320);
+        setTimeout(()=>ghost.remove(),360);
       }
       node.remove();cards.delete(id);
     }
@@ -120,9 +131,9 @@ function makeChatLayer(el){
     if(!reduced)for(const [id,node] of cards){
       const previous=before.get(id),next=node.getBoundingClientRect();
       if(added.has(id)){
-        node.animate([{opacity:0,transform:'translateY(18px)'},{opacity:1,transform:'translateY(0)'}],{duration:260,easing:'ease-out'});
+        node.animate([{opacity:0,transform:'translateY(18px)'},{opacity:1,transform:'translateY(0)'}],{duration:300,easing:'cubic-bezier(.2,.8,.2,1)'});
       }else if(previous&&Math.abs(previous.top-next.top)>1){
-        node.animate([{transform:'translateY('+(previous.top-next.top)+'px)'},{transform:'translateY(0)'}],{duration:300,easing:'ease-out'});
+        node.animate([{transform:'translateY('+(previous.top-next.top)+'px)'},{transform:'translateY(0)'}],{duration:300,easing:'cubic-bezier(.2,.8,.2,1)'});
       }
     }
     el.classList.toggle('visible',cards.size>0);
