@@ -4,7 +4,8 @@ html:has(.overlay-composite), body.overlay-composite { margin:0; padding:0; back
 .overlay-composite #canvas { position:fixed; inset:0; width:100vw; height:100vh; max-width:none; margin:0; padding:0; background:transparent; pointer-events:none; }
 .overlay-composite .obs-layer { position:absolute; display:flex; flex-direction:column; gap:10px; min-width:0; margin:0; padding:0; border:0; background:transparent; border-radius:0; opacity:0; transition:opacity 230ms ease; }
 .overlay-composite .obs-layer.visible {opacity:1}
-.overlay-composite #chat-layer {right:2.5%;bottom:5%;width:29%;align-items:stretch}
+.overlay-composite #chat-layer {right:2.5%;bottom:5%;width:29%;align-items:flex-end}
+.overlay-composite #chat-layer .message-card {width:max-content;max-width:100%;align-self:flex-end;text-align:left}
 .overlay-composite #featured-layer {left:3%;bottom:6%;width:57%}
 .overlay-composite #ticker-layer {left:3%;top:5%;width:55%}
 .overlay-composite #event-layer {right:3%;top:5%;width:35%}
