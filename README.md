@@ -25,6 +25,10 @@ Příchozí komentáře se ukládají do `data/chat.jsonl`, posledních 200 zpr�
 
 Tyto statické stránky jsou samostatné ukázky, zatímco lokální `/director.html` je připojený na skutečný Node.js server.
 
-## Síťový overlay na druhém počítači
+## Lokální provoz
 
-Režie a ovládací API zůstávají dostupné pouze na localhostu (127.0.0.1:4173). Samostatný LAN server naslouchá na TCP 4174 a poskytuje pouze overlay.html, jeho CSS/JS a datový kanál events. Nepřijímá požadavky POST a neukazuje režii ani exporty. Režisérský panel automaticky ukazuje LAN adresu, například http://192.168.1.50:4174/overlay.html. Tuto adresu vložte do OBS Browser Source na druhém PC, s rozlišením 1920 × 1080. Na Windows může být nutné povolit příchozí TCP port 4174 pouze pro soukromou síť. Oba počítače musí být na stejné neizolované LAN. Port 4173 neotvírejte. Síťový overlay je jen ke čtení, ale každý s přístupem k portu 4174 na LAN může zobrazit obsah overlaye.
+Režie i OBS overlay běží na jediném PC: `http://localhost:4173` a `http://localhost:4173/overlay.html`. Server naslouchá pouze na `127.0.0.1`. LAN port 4174 není aktivní.
+
+## Vzhled a avatary
+
+Tmavé karty mají krytí 97 %, světlé 98 %. Ze zobrazovaných jmen se odstraní úvodní `@`. U profilových fotek se přebírá `author.thumbnail.url` z youtube-chat; není-li fotka dostupná nebo se nenačte, zobrazí se iniciály. Načtení obrázků je nutné ověřit na živém chatu.

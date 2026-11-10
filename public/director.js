@@ -1,7 +1,8 @@
 (()=>{
 const $=id=>document.getElementById(id);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const initials=s=>String(s||'').trim().split(/\s+/).slice(0,2).map(x=>x[0]?.toUpperCase()||'').join('')||'•';
+const cleanName=s=>String(s||'').replace(/^@+/,'');
+const initials=s=>cleanName(s).trim().split(/\s+/).slice(0,2).map(x=>x[0]?.toUpperCase()||'').join('')||'•';
 const now=()=>Date.now();
 const feed=$('chatFeed'),frame=$('frame'),viewport=$('viewport');
 let messages=[],featured=null,event=null,eventQueue=[],conf={theme:'dark',chatVisible:true},status='Odpojeno',videoId='';
@@ -42,7 +43,7 @@ function paintChat(force=false){
  const scroll=feed.scrollTop;
  feed.innerHTML=display.length?display.map(m=>{
   const on=isFeatured()&&featured.id===m.id;
-  return '<div class="message'+(on?' on-air':'')+'" data-message-id="'+escape(m.id)+'"><span class="avatar">'+escape(initials(m.author))+'</span><div class="msg-content"><div class="msg-author">'+escape(m.author)+' <span class="msg-meta">'+new Date(m.time).toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit'})+'</span></div><div class="msg-body">'+escape(m.text)+'</div></div><div class="msg-actions"><button class="'+(on?'primary':'subtle')+'" data-feature="'+escape(m.id)+'" aria-pressed="'+on+'">'+(on?'V obraze':'Zvýraznit')+'</button></div></div>';
+  return '<div class="message'+(on?' on-air':'')+'" data-message-id="'+escape(m.id)+'"><span class="avatar">'+escape(initials(m.author))+(m.avatar?'<img src="'+escape(m.avatar)+'" alt="" referrerpolicy="no-referrer" onerror="this.remove()">':'')+'</span><div class="msg-content"><div class="msg-author">'+escape(cleanName(m.author))+' <span class="msg-meta">'+new Date(m.time).toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit'})+'</span></div><div class="msg-body">'+escape(m.text)+'</div></div><div class="msg-actions"><button class="'+(on?'primary':'subtle')+'" data-feature="'+escape(m.id)+'" aria-pressed="'+on+'">'+(on?'V obraze':'Zvýraznit')+'</button></div></div>';
  }).join(''):'<div class="empty">Žádné komentáře.</div>';
  feed.scrollTop=scroll;renderedIds=new Set(display.map(m=>m.id));
  $('chatStats').textContent=display.length+' z '+messages.length+' zpráv';
@@ -51,19 +52,19 @@ function paintChat(force=false){
 function paintFeatured(){
  const selected=isFeatured();
  $('featuredNow').className=selected?'featured-selected':'featured-empty';
- $('featuredNow').innerHTML=selected?'<strong>'+escape(featured.author)+'</strong><p>'+escape(featured.text)+'</p>':'Žádný komentář není zvýrazněný.';
+ $('featuredNow').innerHTML=selected?'<strong>'+escape(cleanName(featured.author))+'</strong><p>'+escape(featured.text)+'</p>':'Žádný komentář není zvýrazněný.';
  $('hideFeatured').disabled=!selected;
  $('featuredRemaining').textContent=selected?'Zbývá '+Math.max(0,Math.ceil((featured.expiresAt-now())/1000))+' s':'90 s od výběru';
 }
 function paintEvents(){
  $('eventCount').textContent=eventQueue.length;
- $('eventNow').innerHTML=event?'<span style="color:'+(event.eventType==='membership'?'#70d6c0':'#f0bf59')+'">'+(event.eventType==='membership'?'ČLENSTVÍ':'SUPER CHAT')+'</span> · '+escape(event.author)+(event.amount?' · '+escape(event.amount):''):'Žádná aktivní událost';
+ $('eventNow').innerHTML=event?'<span style="color:'+(event.eventType==='membership'?'#70d6c0':'#f0bf59')+'">'+(event.eventType==='membership'?'ČLENSTVÍ':'SUPER CHAT')+'</span> · '+escape(cleanName(event.author))+(event.amount?' · '+escape(event.amount):''):'Žádná aktivní událost';
  $('eventRemaining').textContent=event?'Zbývá '+Math.max(0,Math.ceil((event.until-now())/1000))+' s':'';
  $('skipEvent').disabled=!event;
  const key=eventQueue.map(e=>e.id).join('|');
  if(key!==paintedKey){
   paintedKey=key;
-  $('eventQueue').innerHTML=eventQueue.length?eventQueue.map((e,i)=>'<div class="queue-entry"><span>'+(i+1)+'. '+escape(e.author)+' · '+escape(e.eventType==='membership'?'Členství':e.amount||'Super Chat')+'</span><button data-remove="'+escape(e.id)+'" aria-label="Odebrat z fronty">×</button></div>').join(''):'<p class="muted">Fronta je prázdná.</p>';
+  $('eventQueue').innerHTML=eventQueue.length?eventQueue.map((e,i)=>'<div class="queue-entry"><span>'+(i+1)+'. '+escape(cleanName(e.author))+' · '+escape(e.eventType==='membership'?'Členství':e.amount||'Super Chat')+'</span><button data-remove="'+escape(e.id)+'" aria-label="Odebrat z fronty">×</button></div>').join(''):'<p class="muted">Fronta je prázdná.</p>';
  }
 }
 function accept(s){
@@ -113,30 +114,5 @@ setInterval(()=>{
  paintFeatured();paintEvents();
 },500);
 resize();
-
-let lanOverlayAddress='';
-async function findLanOverlay(){
- try{
-  const response=await fetch('/network-info');
-  if(!response.ok)throw Error('Síťové adresy nelze načíst');
-  const data=await response.json();
-  const urls=data.urls||[];
-  lanOverlayAddress=urls.find(url=>/^http:\/\/192\.168\./.test(url))||
-    urls.find(url=>/^http:\/\/10\./.test(url))||
-    urls.find(url=>/^http:\/\/172\.(1[6-9]|2\d|3[01])\./.test(url))||urls[0]||'';
-  $('lanObsUrl').textContent=lanOverlayAddress||'Není nalezena LAN IPv4 adresa';
-  $('copyLanObs').disabled=!lanOverlayAddress;
-  $('copyLanObs').title=urls.length>1?'Dostupné adresy: '+urls.join(' | '):'';
- }catch(error){$('lanObsUrl').textContent='LAN adresa nedostupná';console.error(error)}
-}
-$('copyLanObs').addEventListener('click',async()=>{
- if(!lanOverlayAddress)return;
- try{
-  await navigator.clipboard.writeText(lanOverlayAddress);
-  $('copyLanObs').textContent='Zkopírováno';
-  setTimeout(()=>$('copyLanObs').textContent='Kopírovat LAN',1600);
- }catch{alert('Zkopíruj adresu ručně: '+lanOverlayAddress)}
-});
-findLanOverlay();
 
 })();

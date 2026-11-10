@@ -15,7 +15,7 @@ body.overlay .featured-card,
 body.overlay .promo-banner{
   box-sizing:border-box;display:block;position:relative;min-width:0;width:auto;max-width:100%;
   padding:0;margin:0;border:0;border-radius:5px;
-  background:rgba(10,16,24,.86);color:#f3f8fc;
+  background:rgba(10,16,24,.97);color:#f3f8fc;
   box-shadow:0 8px 18px rgba(0,0,0,.20);
   backdrop-filter:blur(6px);overflow:hidden;
   animation:mbFadeIn .22s ease-out both
@@ -60,7 +60,7 @@ body.overlay:not(.overlay-composite)[data-mode=chat] #stage{align-items:flex-end
 
 /* Two visual variants. Same dimensions, spacing and maximum 5px card radius. */
 body.overlay {
-  --mb-card:rgba(10,16,24,.86);
+  --mb-card:rgba(10,16,24,.97);
   --mb-text:#f3f8fc;
   --mb-heading:#f3f8fc;
   --mb-accent:#87cefa;
@@ -70,7 +70,7 @@ body.overlay {
   --mb-shadow:0 8px 18px rgba(0,0,0,.20);
 }
 body.overlay[data-theme="light"] {
-  --mb-card:rgba(245,249,253,.94);
+  --mb-card:rgba(245,249,253,.98);
   --mb-text:#182431;
   --mb-heading:#111e2c;
   --mb-accent:#3d9dcc;
@@ -150,3 +150,6 @@ body.overlay .event-card--membership .event-card__value{
 body.overlay[data-theme="light"] .event-card__value{color:#9c701c}
 body.overlay[data-theme="light"] .event-card--membership .event-card__value{color:#207c70}
 @media(prefers-reduced-motion:reduce){body.overlay #event-layer .event-card{animation:none}}
+
+body.overlay .avatar-wrap{position:relative;overflow:hidden}
+body.overlay .avatar-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}

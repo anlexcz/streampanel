@@ -1,19 +1,24 @@
 const mode=document.body.dataset.mode;
 const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const initials=name=>String(name||'').trim().split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0].toUpperCase()).join('')||'•';
+const cleanName=name=>String(name||'').replace(/^@+/,'');
+const initials=name=>cleanName(name).trim().split(/\s+/).filter(Boolean).slice(0,2).map(s=>s[0].toUpperCase()).join('')||'•';
 function avatar(m,cls){
-  const src=typeof m.avatar==='string'&&/^https:\/\/(yt3\.ggpht\.com|yt3\.googleusercontent\.com|lh3\.googleusercontent\.com)\//.test(m.avatar)?m.avatar:'';
-  return src?'<img class="'+cls+'" src="'+escapeHtml(src)+'" alt="">':'<span class="'+cls+'">'+escapeHtml(initials(m.author))+'</span>';
+ const url=typeof m.avatar==='string'?m.avatar:'';let src='';
+ try{const u=new URL(url),h=u.hostname.toLowerCase();
+  if(u.protocol==='https:'&&(h==='yt3.ggpht.com'||h==='ggpht.com'||h.endsWith('.ggpht.com')||h==='googleusercontent.com'||h.endsWith('.googleusercontent.com')))src=url;
+ }catch{}
+ return '<span class="'+cls+' avatar-wrap">'+escapeHtml(initials(m.author))+
+ (src?'<img src="'+escapeHtml(src)+'" alt="" referrerpolicy="no-referrer" onerror="this.remove()">':'')+'</span>';
 }
 function card(m,kind){
-  if(kind==='chat')return '<article class="stack-card">'+avatar(m,'stack-avatar')+'<div class="stack-content"><div class="stack-author">'+escapeHtml(m.author)+'</div><div class="stack-text">'+escapeHtml(m.text)+'</div></div></article>';
-  if(kind==='highlight')return '<article class="featured-card"><div class="featured-body"><div class="featured-side">'+avatar(m,'featured-avatar')+'</div><div class="featured-content"><div class="featured-author">'+escapeHtml(m.author)+'</div><div class="featured-text">'+escapeHtml(m.text)+'</div></div></div></article>';
+  if(kind==='chat')return '<article class="stack-card">'+avatar(m,'stack-avatar')+'<div class="stack-content"><div class="stack-author">'+escapeHtml(cleanName(m.author))+'</div><div class="stack-text">'+escapeHtml(m.text)+'</div></div></article>';
+  if(kind==='highlight')return '<article class="featured-card"><div class="featured-body"><div class="featured-side">'+avatar(m,'featured-avatar')+'</div><div class="featured-content"><div class="featured-author">'+escapeHtml(cleanName(m.author))+'</div><div class="featured-text">'+escapeHtml(m.text)+'</div></div></div></article>';
   if(kind==='ticker')return '<article class="promo-banner"><div class="promo-banner__text">'+escapeHtml(m.text)+'</div></article>';
   if(kind==='event'){
     const membership=m.eventType==='membership';
     return '<article class="event-card event-card--'+(membership?'membership':'superchat')+'">'+
       avatar(m,'event-card__avatar')+
-      '<div class="event-card__body"><div class="event-card__author">'+escapeHtml(m.author)+'</div>'+
+      '<div class="event-card__body"><div class="event-card__author">'+escapeHtml(cleanName(m.author))+'</div>'+
       (m.text?'<div class="event-card__text">'+escapeHtml(m.text)+'</div>':'')+'</div>'+
       '<div class="event-card__value">'+(membership?'NOVÝ ČLEN':escapeHtml(m.amount||'SUPER CHAT'))+'</div>'+
       '</article>';
