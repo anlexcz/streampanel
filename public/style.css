@@ -105,8 +105,6 @@ body.overlay #chat-layer .stack-text{display:-webkit-box;-webkit-box-orient:vert
 body.overlay .chat-ghost{z-index:2}
 
 /* Matched entrance/exit displacement for the selected comment and banners. */
-body.overlay #featured-layer,body.overlay #ticker-layer{transition:opacity 260ms ease,transform 260ms cubic-bezier(.2,.8,.2,1);transform:translateY(-18px)}
-body.overlay #featured-layer.visible,body.overlay #ticker-layer.visible{transform:translateY(0)}
-body.overlay .featured-card{animation:none}
+body.overlay #featured-layer,body.overlay #ticker-layer{transition:none;transform:none}
+body.overlay .featured-card,body.overlay .promo-banner{animation:none}
 body.overlay #chat-layer .stack-card.chat-ghost{animation:none}
-@media(prefers-reduced-motion:reduce){body.overlay #featured-layer,body.overlay #ticker-layer{transition:none;transform:none}}

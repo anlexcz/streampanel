@@ -29,13 +29,19 @@ function makeLayer(el,kind){
       el.replaceChildren();
       if(!entries.length)return;
       el.innerHTML=entries.map(m=>card(m,kind)).join('');
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        if(current===epoch)el.classList.add('visible');
-      }));
+      el.classList.add('visible');
+      if(!reduced)el.animate(
+        [{opacity:0,transform:'translateY(18px)'},{opacity:1,transform:'translateY(0)'}],
+        {duration:300,easing:'cubic-bezier(.2,.8,.2,1)'}
+      );
     };
     if(outgoing&&!reduced){
-      el.classList.remove('visible');
-      removal=setTimeout(draw,260);
+      const anim=el.animate(
+        [{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-18px)'}],
+        {duration:260,easing:'cubic-bezier(.2,.8,.2,1)'}
+      );
+      anim.onfinish=()=>{if(current===epoch){el.classList.remove('visible');draw()}};
+      removal=setTimeout(()=>{if(current===epoch){anim.cancel();el.classList.remove('visible');draw()}},320);
     }else{
       el.classList.remove('visible');
       draw();
