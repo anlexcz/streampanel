@@ -8,8 +8,7 @@
    {id:'3',author:'Martin',text:'Bude záznam dostupný?',type:'message'}
  ];
  let messages=defaults();
- let clockOffset=0;
- const time=()=>new Date(Date.now()-clockOffset).toISOString();
+ const time=()=>new Date().toISOString();
  messages=messages.map(m=>({...m,time:time()}));
  let ready=false;
  function scale(){
@@ -38,7 +37,7 @@
    for(let i=0;i<12;i++){sequence++;messages.push({id:String(sequence),author:'Divák '+sequence,text:i%4===0?'Delší komentář pro kontrolu zalamování: co si myslíte o změnách jízdních řádů a přestupech v Praze?':'Testovací komentář číslo '+(i+1),type:'message',time:time()})}
    messages=messages.slice(-200);update();
  });
- $('age').addEventListener('click',()=>{clockOffset+=61000;messages=messages.map(m=>({...m,time:new Date(Date.parse(m.time)-61000).toISOString()}));update()});
+ $('age').addEventListener('click',()=>{messages=messages.map(m=>({...m,time:new Date(Date.parse(m.time)-61000).toISOString()}));update()});
  $('background').addEventListener('change',()=>{viewport.className='viewport '+$('background').value});
  new ResizeObserver(scale).observe(viewport);
  scale();
